@@ -122,22 +122,24 @@
       z-index: 10;
       pointer-events: none;
     }
-    .global-label {
+
+    /* Infobulle de survol (Planétarium style) */
+    #hover-tooltip {
       position: absolute;
-      padding: 2px 7px;
-      border-radius: 10px;
-      font-size: 9px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 700;
-      background: rgba(5, 10, 20, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.6);
-      color: #e2e8f0;
-      cursor: pointer;
-      pointer-events: auto;
-      transform: translate(-50%, -100%);
+      background: rgba(10, 15, 28, 0.92);
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      pointer-events: none;
+      transform: translate(-50%, -140%);
       white-space: nowrap;
-      will-change: transform;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+      z-index: 25;
     }
-    .global-label:hover { border-color: #38bdf8; color: #38bdf8; transform: translate(-50%, -110%) scale(1.1); }
 
     .belt-label {
       position: absolute;
@@ -152,7 +154,6 @@
       transform: translate(-50%, -50%);
       white-space: nowrap;
       letter-spacing: 0.5px;
-      will-change: transform;
     }
 
     .poi-label {
@@ -167,8 +168,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.85);
       backdrop-filter: blur(8px);
       pointer-events: auto;
-      transition: opacity 0.25s ease, transform 0.15s ease;
-      will-change: transform;
+      transition: opacity 0.3s ease, transform 0.15s ease;
     }
     .poi-label:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 15; }
     .poi-volcano { background: rgba(50, 10, 10, 0.92); border: 1px solid #ef4444; color: #fca5a5; }
@@ -388,11 +388,13 @@
   
   <div id="main-stage">
     <div id="viewport"></div>
-    <div id="labels-container"></div>
+    <div id="labels-container">
+      <div id="hover-tooltip"></div>
+    </div>
 
     <div id="top-bar">
       <div class="hud-card">
-        <div class="hud-title" id="mode-title">SYSTÈME SOLAIRE</div>
+        <div class="hud-title" id="mode-title">SYSTÈMÊ SOLAIRE</div>
         <button id="btn-back" onclick="launchGlobalMode()">⬅ Vue d'ensemble</button>
       </div>
 
@@ -464,7 +466,7 @@
 
       <div class="nav-gesture-hint">
         <span>💡</span>
-        <span><strong>1 clic :</strong> Centrer / Verrouiller &nbsp;|&nbsp; <strong>Double-clic (Astre ou Nom) :</strong> Zoom Studio & Étiquettes</span>
+        <span><strong>Survol :</strong> Nom de l'astre &nbsp;|&nbsp; <strong>1 clic :</strong> Fiche &nbsp;|&nbsp; <strong>Double-clic :</strong> Zoom Studio</span>
       </div>
 
       <div class="badge-container">
@@ -584,27 +586,20 @@
 
   function createSaturnRingTexture() {
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 64;
+    canvas.width = 512;
+    canvas.height = 32;
     const ctx = canvas.getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 1024, 0);
+    const grad = ctx.createLinearGradient(0, 0, 512, 0);
 
     grad.addColorStop(0.00, 'rgba(0, 0, 0, 0)');
-    grad.addColorStop(0.05, 'rgba(80, 70, 60, 0.2)');
-    grad.addColorStop(0.20, 'rgba(120, 105, 85, 0.45)');
-    grad.addColorStop(0.25, 'rgba(195, 175, 140, 0.95)');
-    grad.addColorStop(0.55, 'rgba(215, 195, 160, 0.98)');
-    grad.addColorStop(0.57, 'rgba(10, 10, 15, 0.05)');
-    grad.addColorStop(0.61, 'rgba(10, 10, 15, 0.05)');
-    grad.addColorStop(0.63, 'rgba(180, 160, 130, 0.85)');
+    grad.addColorStop(0.25, 'rgba(195, 175, 140, 0.9)');
+    grad.addColorStop(0.55, 'rgba(215, 195, 160, 0.95)');
+    grad.addColorStop(0.57, 'rgba(10, 10, 15, 0.1)');
     grad.addColorStop(0.78, 'rgba(170, 150, 120, 0.8)');
-    grad.addColorStop(0.80, 'rgba(20, 20, 25, 0.1)');
-    grad.addColorStop(0.82, 'rgba(160, 140, 115, 0.7)');
-    grad.addColorStop(0.92, 'rgba(130, 115, 95, 0.3)');
     grad.addColorStop(1.00, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 1024, 64);
+    ctx.fillRect(0, 0, 512, 32);
     const tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;
     return tex;
@@ -613,27 +608,27 @@
 
   function getMercuryPOIs() {
     return [
-      { name: "Cratère Abedin", lat: 61.7, lon: 349.3, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact aux auréoles sombres et éjectas rayonnants situés dans l'hémisphère nord, caractérisé par une morphologie atypique et un fond sombres distinct.", img: driveUrl("13XlMbv-4Zkw5ypCnWCXcTZW5L6q9clPH") },
-      { name: "Cratère Abu Nuwas", lat: 17.4, lon: 20.9, prio: 1, type: "Cratère d'impact", desc: "Cratère nommé en l'honneur du célèbre poète arabe Abu Nuwas, présentant un plancher relativement plat et des terrasses de glissement internes bien préservées.", img: driveUrl("12tfV-KE7dnFa9eUswLFoJQXprpafG4dB") },
-      { name: "Cratère Africanus Horton", lat: -51.5, lon: 41.2, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact complexe de 128 km de diamètre aux remparts fortement érodés par les impacts secondaires successifs au cours des âges géologiques.", img: driveUrl("1FguUiX20zFUGBh0ovh6Ya0-4d1ngbHuD") },
-      { name: "Cratère Ahmad Baba", lat: 58.5, lon: 126.8, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact situé dans les hautes latitudes nord de Mercure, dévoilant des structures de rebond central typiques des bassins d'impact moyens.", img: driveUrl("1p-Pfdybe_eIv2yLQERHlf2SQ60QNZP7B") },
-      { name: "Cratère Ailey", lat: 45.5, lon: 182.1, prio: 1, type: "Cratère d'impact", desc: "Cratère nommé en l'honneur du chorégraphe américain Alvin Ailey, marquant une zone de transition géologique riche en matériaux éjectés clairs.", img: driveUrl("1eyK905eSMpCKAA6poaDwl-TKppU5NuAZ") },
-      { name: "Cratère Aksakov", lat: 34.7, lon: 281.3, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact de 174 km nommé en l'honneur de l'écrivain russe Sergey Aksakov, montrant un plancher intérieur marqué par de superbes structures géologiques.", img: driveUrl("1uq5ylQJmxI6DbZki3-JroVegGAKUxz-s") },
-      { name: "Cratère Akutagawa", lat: 48.2, lon: 218.9, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact de taille moyenne nommé d'après l'écrivain japonais Ryunosuke Akutagawa, situé au sein des vastes plaines lisses de l'hémisphère nord.", img: driveUrl("15UsoA6Wk84wADKv1nw0ifnB7MjXhuSaU") },
-      { name: "Cratère Al-Akhtal", lat: 59.4, lon: 260.3, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact nommé en l'honneur du poète arabe Al-Akhtal, présentant des creux géologiques brillants et caractéristiques sur ses parois internes.", img: driveUrl("1AxBRBMnqb1mDfsyym60lYf451RzBQYi4") },
-      { name: "Cratère Alencar", lat: -63.6, lon: 256.2, prio: 1, type: "Cratère d'impact", desc: "Cratère nommé en hommage au romancier brésilien José de Alencar, situé dans les régions australes et soumis à des contrastes d'ombrage marqués.", img: driveUrl("1FE4cU8sJkDYZU5u4tSjdsPwzRxjKQQJ8") },
-      { name: "Cratère Al-Hamadhani", lat: 39.2, lon: 268.2, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact d'une grande complexité géologique abritant de superbes creux (hollows) brillants découverts par la sonde MESSENGER.", img: driveUrl("1oyLOBPzOwQJW9_4aSVIhaNcwmJ7T1qxf") },
-      { name: "Cratère Al-Jāhiz", lat: 1.4, lon: 338.2, prio: 1, type: "Cratère d'impact", desc: "Cratère équatorial nommé d'après l'auteur arabe Al-Jāhiz, caractérisé par une érosion prononcée de ses rebords et des remplissages de plaines.", img: driveUrl("1X6gOlPpbaf7Z0Zu-67YCeA-NLFak7uvm") },
-      { name: "Cratère Alver", lat: -67.0, lon: 77.2, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact de 151 km situé près du pôle sud de Mercure, nommé en l'honneur de la poétesse estonienne Betti Alver.", img: driveUrl("1CkIRqbaKOR2oYnMs_Fqzk0RjKHSCF5Vy") },
-      { name: "Cratère Amaral", lat: -26.5, lon: 117.8, prio: 1, type: "Cratère d'impact", desc: "Cratère nommé d'après la peintre brésilienne Tarsila do Amaral, situé dans les hautes terres et présentant un pic central bien structuré.", img: driveUrl("16BAKPqWF9XdDudhZyYaSciImWuczh7Ut") },
-      { name: "Cratère Andal", lat: -47.5, lon: 322.3, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact nommé en l'honneur de la poétesse tamoule Andal, doté d'un fond plat et d'une morphologie typique des grands bassins anciens.", img: driveUrl("1A55otd-2ytYDj0rfbMdQujUWz27pacYm") },
-      { name: "Cratère Aneirin", lat: -27.5, lon: 357.3, prio: 1, type: "Cratère d'impact", desc: "Cratère nommé d'après le poète brittonique Aneirin, illustrant une empreinte d'impact ancienne profondément modifiée par les âges géologiques.", img: driveUrl("1CLj1x_mcR9wzrrdRMK9tEts2fgnc0aCr") },
-      { name: "Cratère Anyte", lat: 79.5, lon: 149.3, prio: 1, type: "Cratère d'impact", desc: "Cratère polaire nord nommé d'après la poétesse grecque Anyte de Tégée, niché dans des zones perpétuellement ombragées propices aux glaces.", img: driveUrl("1Sr3TSovCf7AqevbLzAPJcQEoQR2YtF4g") },
-      { name: "Cratère Apollodorus", lat: 30.5, lon: 163.3, prio: 1, type: "Cratère d'impact", desc: "Cratère brillant associé à un spectaculaire réseau de failles rayonnantes en forme d'araignée (Pantheon Fossae) au cœur du bassin Caloris.", img: driveUrl("1841aXToULRS49OmxcPsXPIUW4nz95f90") },
-      { name: "Cratère Atget", lat: 25.6, lon: 193.6, prio: 1, type: "Cratère d'impact", desc: "Cratère d'impact de 100 km situé à l'intérieur du bassin Caloris, remarquable par ses matériaux sombres et l'absence de pics centraux classiques.", img: driveUrl("176J2lIq94FLnUN_uJErb4AeHNgOIH5Ua") }
+      { name: "Cratère Abedin", lat: 61.7, lon: 349.3, prio: 1, desc: "Cratère d'impact aux auréoles sombres et éjectas rayonnants situés dans l'hémisphère nord, caractérisé par une morphologie atypique et un fond sombres distinct.", img: driveUrl("13XlMbv-4Zkw5ypCnWCXcTZW5L6q9clPH") },
+      { name: "Cratère Abu Nuwas", lat: 17.4, lon: 20.9, prio: 1, desc: "Cratère nommé en l'honneur du célèbre poète arabe Abu Nuwas, présentant un plancher relativement plat et des terrasses de glissement internes bien préservées.", img: driveUrl("12tfV-KE7dnFa9eUswLFoJQXprpafG4dB") },
+      { name: "Cratère Africanus Horton", lat: -51.5, lon: 41.2, prio: 1, desc: "Cratère d'impact complexe de 128 km de diamètre aux remparts fortement érodés par les impacts secondaires successifs au cours des âges géologiques.", img: driveUrl("1FguUiX20zFUGBh0ovh6Ya0-4d1ngbHuD") },
+      { name: "Cratère Ahmad Baba", lat: 58.5, lon: 126.8, prio: 1, desc: "Cratère d'impact situé dans les hautes latitudes nord de Mercure, dévoilant des structures de rebond central typiques des bassins d'impact moyens.", img: driveUrl("1p-Pfdybe_eIv2yLQERHlf2SQ60QNZP7B") },
+      { name: "Cratère Ailey", lat: 45.5, lon: 182.1, prio: 1, desc: "Cratère nommé en l'honneur du chorégraphe américain Alvin Ailey, marquant une zone de transition géologique riche en matériaux éjectés clairs.", img: driveUrl("1eyK905eSMpCKAA6poaDwl-TKppU5NuAZ") },
+      { name: "Cratère Aksakov", lat: 34.7, lon: 281.3, prio: 2, desc: "Cratère d'impact de 174 km nommé en l'honneur de l'écrivain russe Sergey Aksakov, montrant un plancher intérieur marqué par de superbes structures géologiques.", img: driveUrl("1uq5ylQJmxI6DbZki3-JroVegGAKUxz-s") },
+      { name: "Cratère Akutagawa", lat: 48.2, lon: 218.9, prio: 2, desc: "Cratère d'impact de taille moyenne nommé d'après l'écrivain japonais Ryunosuke Akutagawa, situé au sein des vastes plaines lisses de l'hémisphère nord.", img: driveUrl("15UsoA6Wk84wADKv1nw0ifnB7MjXhuSaU") },
+      { name: "Cratère Al-Akhtal", lat: 59.4, lon: 260.3, prio: 2, desc: "Cratère d'impact nommé en l'honneur du poète arabe Al-Akhtal, présentant des creux géologiques brillants et caractéristiques sur ses parois internes.", img: driveUrl("1AxBRBMnqb1mDfsyym60lYf451RzBQYi4") },
+      { name: "Cratère Alencar", lat: -63.6, lon: 256.2, prio: 2, desc: "Cratère nommé en hommage au romancier brésilien José de Alencar, situé dans les régions australes et soumis à des contrastes d'ombrage marqués.", img: driveUrl("1FE4cU8sJkDYZU5u4tSjdsPwzRxjKQQJ8") },
+      { name: "Cratère Al-Hamadhani", lat: 39.2, lon: 268.2, prio: 2, desc: "Cratère d'impact d'une grande complexité géologique abritant de superbes creux (hollows) brillants découverts par la sonde MESSENGER.", img: driveUrl("1oyLOBPzOwQJW9_4aSVIhaNcwmJ7T1qxf") },
+      { name: "Cratère Al-Jāhiz", lat: 1.4, lon: 338.2, prio: 2, desc: "Cratère équatorial nommé d'après l'auteur arabe Al-Jāhiz, caractérisé par une érosion prononcée de ses rebords et des remplissages de plaines.", img: driveUrl("1X6gOlPpbaf7Z0Zu-67YCeA-NLFak7uvm") },
+      { name: "Cratère Alver", lat: -67.0, lon: 77.2, prio: 2, desc: "Cratère d'impact de 151 km situé près du pôle sud de Mercure, nommé en l'honneur de la poétesse estonienne Betti Alver.", img: driveUrl("1CkIRqbaKOR2oYnMs_Fqzk0RjKHSCF5Vy") },
+      { name: "Cratère Amaral", lat: -26.5, lon: 117.8, prio: 2, desc: "Cratère nommé d'après la peintre brésilienne Tarsila do Amaral, situé dans les hautes terres et présentant un pic central bien structuré.", img: driveUrl("16BAKPqWF9XdDudhZyYaSciImWuczh7Ut") },
+      { name: "Cratère Andal", lat: -47.5, lon: 322.3, prio: 2, desc: "Cratère d'impact nommé en l'honneur de la poétesse tamoule Andal, doté d'un fond plat et d'une morphologie typique des grands bassins anciens.", img: driveUrl("1A55otd-2ytYDj0rfbMdQujUWz27pacYm") },
+      { name: "Cratère Aneirin", lat: -27.5, lon: 357.3, prio: 2, desc: "Cratère nommé d'après le poète brittonique Aneirin, illustrant une empreinte d'impact ancienne profondément modifiée par les âges géologiques.", img: driveUrl("1CLj1x_mcR9wzrrdRMK9tEts2fgnc0aCr") },
+      { name: "Cratère Anyte", lat: 79.5, lon: 149.3, prio: 2, desc: "Cratère polaire nord nommé d'après la poétesse grecque Anyte de Tégée, niché dans des zones perpétuellement ombragées propices aux glaces.", img: driveUrl("1Sr3TSovCf7AqevbLzAPJcQEoQR2YtF4g") },
+      { name: "Cratère Apollodorus", lat: 30.5, lon: 163.3, prio: 1, desc: "Cratère brillant associé à un spectaculaire réseau de failles rayonnantes en forme d'araignée (Pantheon Fossae) au cœur du bassin Caloris.", img: driveUrl("1841aXToULRS49OmxcPsXPIUW4nz95f90") },
+      { name: "Cratère Atget", lat: 25.6, lon: 193.6, prio: 1, desc: "Cratère d'impact de 100 km situé à l'intérieur du bassin Caloris, remarquable par ses matériaux sombres et l'absence de pics centraux classiques.", img: driveUrl("176J2lIq94FLnUN_uJErb4AeHNgOIH5Ua") }
     ].map(d => ({
-      name: d.name, type: d.type, cat: "crater", css: "poi-crater", lat: d.lat, lon: d.lon,
-      priority: d.prio, desc: d.desc, img: d.img,
+      name: d.name, type: d.type || "Cratère d'impact", cat: "crater", css: "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio || 1, desc: d.desc, img: d.img,
       metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
     }));
   }
@@ -1071,7 +1066,6 @@
   let scene, camera, renderer, controls;
   let currentMode = 'GLOBAL';
   let globalEntities = [];
-  let globalLabels = [];
   let globalOrbits = [];
   let beltLabels = [];
   let studioMesh = null;
@@ -1147,6 +1141,7 @@
     
     renderer.domElement.addEventListener("click", onCanvasSingleClick);
     renderer.domElement.addEventListener("dblclick", onCanvasDoubleClick);
+    renderer.domElement.addEventListener("mousemove", onCanvasMouseMove);
 
     setupControls();
 
@@ -1217,9 +1212,8 @@
   }
 
   function clearLabels() {
-    document.getElementById("labels-container").innerHTML = "";
+    document.getElementById("hover-tooltip").style.display = "none";
     studioPois = [];
-    globalLabels = [];
     beltLabels = [];
   }
 
@@ -1252,9 +1246,8 @@
     scene.add(ambientLightRef);
     applyLightingConfig(false);
 
-    buildStarfield();
-    buildAsteroids(47, 53, 100, 0x94a3b8);
-    buildAsteroids(115, 128, 120, 0x64748b);
+    buildAsteroids(47, 53, 80, 0x94a3b8);
+    buildAsteroids(115, 128, 100, 0x64748b);
 
     const labelsCont = document.getElementById("labels-container");
 
@@ -1271,7 +1264,6 @@
     beltLabels.push({ element: kuiperBeltLabel, pos: new THREE.Vector3(122, 0, 0) });
 
     globalEntities = [];
-    globalLabels = [];
     globalOrbits = [];
 
     GLOBAL_BODIES.forEach(p => {
@@ -1328,22 +1320,8 @@
         globalOrbits.push(orbitLine);
       }
 
-      const label = document.createElement("div");
-      label.className = "global-label";
-      label.textContent = p.name;
-      label.addEventListener("dblclick", (e) => {
-        e.stopPropagation();
-        if (CATALOG[p.id]) launchStudio(p.id);
-      });
-      label.addEventListener("click", (e) => {
-        e.stopPropagation();
-        focusOnBody(p.id);
-      });
-      labelsCont.appendChild(label);
-
-      mesh.userData = { id: p.id };
+      mesh.userData = { id: p.id, name: p.name };
       globalEntities.push({ pivot: orbitPivot, mesh: mesh, speed: p.speed, isMoon: false });
-      globalLabels.push({ element: label, mesh: mesh });
 
       if (p.moons) {
         p.moons.forEach(m => {
@@ -1379,23 +1357,8 @@
           mesh.add(mOrbitLine);
           globalOrbits.push(mOrbitLine);
 
-          const mLabel = document.createElement("div");
-          mLabel.className = "global-label";
-          mLabel.textContent = m.name;
-          mLabel.style.fontSize = "8px";
-          mLabel.addEventListener("dblclick", (e) => {
-            e.stopPropagation();
-            if (CATALOG[m.id]) launchStudio(m.id);
-          });
-          mLabel.addEventListener("click", (e) => {
-            e.stopPropagation();
-            focusOnBody(m.id);
-          });
-          labelsCont.appendChild(mLabel);
-
-          moonMesh.userData = { id: m.id };
+          moonMesh.userData = { id: m.id, name: m.name };
           globalEntities.push({ pivot: moonPivot, mesh: moonMesh, speed: m.speed, isMoon: true });
-          globalLabels.push({ element: mLabel, mesh: moonMesh });
         });
       }
     });
@@ -1516,8 +1479,6 @@
     controls.minDistance = 1.5;
     controls.maxDistance = 9;
 
-    buildStarfield();
-
     ambientLightRef = new THREE.AmbientLight(0xffffff, 0.65);
     scene.add(ambientLightRef);
     sunLightRef = new THREE.DirectionalLight(0xfff5e6, 1.1);
@@ -1594,6 +1555,8 @@
         const el = document.createElement("div");
         el.className = `poi-label ${poi.css}`;
         el.textContent = poi.name;
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
 
         el.addEventListener("pointerdown", (e) => {
           e.stopPropagation();
@@ -1614,7 +1577,10 @@
     const btn = document.getElementById("btn-toggle-pois");
     btn.innerText = `🏷️ Étiquettes : ${poisVisible ? 'On' : 'Off'}`;
     studioPois.forEach(item => {
-      item.element.style.display = poisVisible ? 'block' : 'none';
+      if (!poisVisible) {
+        item.element.style.opacity = '0';
+        item.element.style.pointerEvents = 'none';
+      }
     });
   };
 
@@ -1876,17 +1842,6 @@
     });
   }
 
-  function buildStarfield() {
-    const geo = new THREE.BufferGeometry();
-    const coords = [];
-    for (let i = 0; i < 350; i++) { // Réduit à 350 étoiles pour soulager le GPU
-      coords.push((Math.random() - 0.5) * 1200, (Math.random() - 0.5) * 1200, (Math.random() - 0.5) * 1200);
-    }
-    geo.setAttribute("position", new THREE.Float32BufferAttribute(coords, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x94a3b8, size: 1.1 });
-    scene.add(new THREE.Points(geo, mat));
-  }
-
   function buildAsteroids(minR, maxR, count, col) {
     const geo = new THREE.BufferGeometry();
     const coords = [];
@@ -1936,27 +1891,13 @@
           }
         }
 
-        globalLabels.forEach(item => {
-          item.mesh.getWorldPosition(worldPos);
-          const screenPos = worldPos.clone().project(camera);
-          const x = (screenPos.x * 0.5 + 0.5) * stageW;
-          const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
-
-          if (screenPos.z < 1) {
-            item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -120%)`;
-            item.element.style.opacity = '1';
-          } else {
-            item.element.style.opacity = '0';
-          }
-        });
-
         beltLabels.forEach(item => {
           const screenPos = item.pos.clone().project(camera);
           const x = (screenPos.x * 0.5 + 0.5) * stageW;
           const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
           if (screenPos.z < 1) {
             item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-            item.element.style.opacity = '0.85';
+            item.element.style.opacity = '0.75';
           } else {
             item.element.style.opacity = '0';
           }
@@ -1981,7 +1922,15 @@
             const normal = poiWorld.clone().normalize();
             const dot = normal.dot(eyeVec);
 
-            const isVisibleLOD = (camDistance <= 3.6) || (item.priority === 1);
+            // LOD progressif : les étiquettes apparaissent selon le zoom (camDistance) et la priorité
+            let isVisibleLOD = false;
+            if (camDistance <= 2.2) {
+              isVisibleLOD = true; // Zoom max : tout s'affiche
+            } else if (camDistance <= 3.2) {
+              isVisibleLOD = (item.priority <= 2); // Zoom moyen : priorité 1 et 2
+            } else {
+              isVisibleLOD = (item.priority === 1); // Vue large : seulement les majeurs
+            }
 
             if (dot > 0.22 && isVisibleLOD) {
               const screenPos = poiWorld.clone().project(camera);
@@ -2003,6 +1952,33 @@
       renderer.render(scene, camera);
     }
     loop();
+  }
+
+  function onCanvasMouseMove(e) {
+    if (currentMode !== 'GLOBAL') {
+      document.getElementById("hover-tooltip").style.display = "none";
+      return;
+    }
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+    const meshes = globalEntities.map(g => g.mesh);
+    const hits = raycaster.intersectObjects(meshes);
+    const tooltip = document.getElementById("hover-tooltip");
+
+    if (hits.length > 0) {
+      const obj = hits[0].object;
+      tooltip.textContent = obj.userData.name;
+      tooltip.style.display = "block";
+      tooltip.style.left = `${e.clientX - rect.left}px`;
+      tooltip.style.top = `${e.clientY - rect.top}px`;
+      renderer.domElement.style.cursor = "pointer";
+    } else {
+      tooltip.style.display = "none";
+      renderer.domElement.style.cursor = "default";
+    }
   }
 
   function onCanvasSingleClick(e) {
