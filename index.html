@@ -160,7 +160,6 @@
     .poi-crater  { background: rgba(50, 25, 8, 0.92); border: 1px solid #f97316; color: #fdba74; }
     .poi-corona  { background: rgba(45, 15, 55, 0.92); border: 1px solid #c084fc; color: #e9d5ff; }
 
-    /* Croix verte pour les missions au sol */
     .probe-marker {
       position: absolute;
       width: 16px;
@@ -569,6 +568,9 @@
 <script>
   const COMMIT_HASH     = "d75e10f70b029c5bcb7acb2bddead9c33c69657c";
   const GITHUB_CDN_BASE = `https://cdn.jsdelivr.net/gh/renoultdavid/textures@${COMMIT_HASH}/`;
+  
+  const LUNES_COMMIT    = "68b6d34056efb1065207f0b5e139d5998cc0a575";
+  const LUNES_CDN_BASE  = `https://raw.githubusercontent.com/renoultdavid/textures/${LUNES_COMMIT}/`;
 
   const JUPITER_TEX_URL = GITHUB_CDN_BASE + "Jupiter.jpg";
   const MARS_TEX_URL    = GITHUB_CDN_BASE + "Mars.jpg";
@@ -577,6 +579,16 @@
   const TERRE_TEX_URL   = GITHUB_CDN_BASE + "Terre.jpg";
   const URANUS_TEX_URL  = GITHUB_CDN_BASE + "Uranus.jpg";
   const LUNE_TEX_URL    = GITHUB_CDN_BASE + "lune.jpg";
+
+  // Nouveaux liens raw pour les lunes, anneaux et corps demandés
+  const CALLISTO_TEX_URL  = LUNES_CDN_BASE + "Callisto.png";
+  const ENCELADE_TEX_URL  = LUNES_CDN_BASE + "Enselade.webp";
+  const EUROPE_TEX_URL    = LUNES_CDN_BASE + "Europe.png";
+  const GANYMEDE_TEX_URL  = LUNES_CDN_BASE + "Ganyme%CC%80de.webp";
+  const IO_TEX_URL        = LUNES_CDN_BASE + "Io.png";
+  const PLUTON_TEX_URL    = LUNES_CDN_BASE + "Pluton.png";
+  const SATURN_RING_URL   = LUNES_CDN_BASE + "Saturne%20anneaux.png";
+  const TITAN_TEX_URL     = LUNES_CDN_BASE + "Titan.png";
 
   const VENUS_ATM_URL   = "https://cdn.jsdelivr.net/gh/renoultdavid/textures@main/Solarsystemscope_texture_4k_venus_atmosphere.jpg";
   const VENUS_SOL_URL   = "https://cdn.jsdelivr.net/gh/renoultdavid/textures@main/Venus%20sol.jpg";
@@ -592,24 +604,13 @@
     return `https://lh3.googleusercontent.com/d/${id}`;
   }
 
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.setCrossOrigin('anonymous');
+
   function createSaturnRingTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 32;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 512, 0);
-
-    grad.addColorStop(0.00, 'rgba(0, 0, 0, 0)');
-    grad.addColorStop(0.25, 'rgba(195, 175, 140, 0.9)');
-    grad.addColorStop(0.55, 'rgba(215, 195, 160, 0.95)');
-    grad.addColorStop(0.57, 'rgba(10, 10, 15, 0.1)');
-    grad.addColorStop(0.78, 'rgba(170, 150, 120, 0.8)');
-    grad.addColorStop(1.00, 'rgba(0, 0, 0, 0)');
-
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 512, 32);
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.needsUpdate = true;
+    const tex = textureLoader.load(SATURN_RING_URL, (t) => {
+      t.needsUpdate = true;
+    });
     return tex;
   }
   const saturnRingTexture = createSaturnRingTexture();
@@ -726,8 +727,7 @@
       gasComposition: [{ name: "Oxygène", pct: 42.0, color: "#38bdf8" }, { name: "Sodium", pct: 29.0, color: "#fbbf24" }],
       atmosphere: "Exosphère ultra-ténue arrachée en permanence par le vent solaire.", climate: "-180 °C à +430 °C.", atmoMetrics: [{ label: "Pression", val: "~10⁻¹⁴ bar" }],
       orbit: "Résonance spin-orbite 3:2 unique.", orbitSemiMajor: 0.387, orbitEccentricity: 0.2056, orbitMetrics: [{ label: "Périhélie", val: "46,0 M km" }],
-      missions: [{ year: "2011", name: "MESSENGER", note: "Mise en orbite et cartographie globale." }],
-      pois: getMercuryPOIs()
+      missions: [{ year: "2011", name: "MESSENGER", note: "Mise en orbite et cartographie globale." }]
     },
     "Vénus": {
       name: "Vénus", type: "Planète tellurique à effet de serre", scale: 0.95, color: 0xd69c5a, texture: VENUS_ATM_URL, textureSurface: VENUS_SOL_URL,
@@ -791,7 +791,7 @@
       orbitMetrics: [{ label: "Altitude", val: "6 000 km" }], missions: [{ year: "2004", name: "Mars Express", note: "Étude gravimétrique par l'ESA." }]
     },
     "Io": {
-      name: "Io", type: "Lune volcanique", scale: 0.28, color: 0xd4b333, texture: S3_CDN + "io.jpg",
+      name: "Io", type: "Lune volcanique", scale: 0.28, color: 0xd4b333, texture: IO_TEX_URL,
       desc: "Io est le corps le plus volcaniquement actif de tout le système solaire. Cette intense activité est causée par un réchauffement par effet de marée généré par la résonance orbitale avec Europa et Ganymède sous la puissante gravité de Jupiter. Sa surface est couverte de lacs de soufre fondu et de panaches volcaniques s'élevant à des dizaines de kilomètres de hauteur, transformant constamment sa croûte multicolore.",
       cutaway: [{ name: "Noyau", radius: 0.35, color: "#dc2626", temp: "2 000 K" }, { name: "Manteau", radius: 0.90, color: "#f59e0b", temp: "1 500 K" }, { name: "Croûte", radius: 1.00, color: "#fef08a", temp: "130 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "3 642 km" }, { label: "Volcans", val: "> 400 actifs" }],
@@ -802,7 +802,7 @@
       orbitMetrics: [{ label: "Distance", val: "421 700 km" }], missions: [{ year: "1979", name: "Voyager 1", note: "Découverte des volcans actifs par la NASA." }]
     },
     "Europe": {
-      name: "Europe", type: "Lune glacée", scale: 0.25, color: 0xb0c4de, texture: S3_CDN + "europa.jpg",
+      name: "Europe", type: "Lune glacée", scale: 0.25, color: 0xb0c4de, texture: EUROPE_TEX_URL,
       desc: "Europe est la plus fascinante des lunes galiléennes en raison de sa croûte de glace d'eau pure striée de fractures sombres. Sous cette banquise épaisse de 15 à 25 kilomètres se trouve un vaste océan global d'eau liquide souterrain, maintenu à l'état liquide par la chaleur des marées joviennes. Cet environnement aquatique profond fait d'Europe l'une des priorités absolues de l'astrobiologie moderne pour la recherche de formes de vie extraterrestres.",
       cutaway: [{ name: "Noyau", radius: 0.30, color: "#dc2626", temp: "1 500 K" }, { name: "Océan", radius: 1.00, color: "#38bdf8", temp: "100 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "3 121 km" }, { label: "Océan", val: "60-150 km" }],
@@ -810,11 +810,10 @@
       geophysics: "Océan souterrain d'eau liquide salée sous une croûte de glace active.", magnetism: "Champ magnétique induit par l'océan.", geoMetrics: [{ label: "Banquise", val: "15-25 km" }],
       gasComposition: [{ name: "Oxygène", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère ténue d'oxygène.", climate: "-160 °C.",
       atmoMetrics: [{ label: "Pression", val: "10⁻¹¹ bar" }], orbit: "Résonance 2:1 avec Io.", orbitSemiMajor: 0.0045, orbitEccentricity: 0.009,
-      orbitMetrics: [{ label: "Distance", val: "671 000 km" }], missions: [{ year: "2024", name: "Europa Clipper", note: "Mission d'analyse de l'habitabilité de l'océan." }],
-      pois: getEuropaPOIs()
+      orbitMetrics: [{ label: "Distance", val: "671 000 km" }], missions: [{ year: "2024", name: "Europa Clipper", note: "Mission d'analyse de l'habitabilité de l'océan." }]
     },
     "Ganymede": {
-      name: "Ganymède", type: "Plus grande lune", scale: 0.41, color: 0x857e74, texture: LUNE_TEX_URL,
+      name: "Ganymède", type: "Plus grande lune", scale: 0.41, color: 0x857e74, texture: GANYMEDE_TEX_URL,
       desc: "Ganymède est le plus grand satellite naturel de tout le système solaire, surpassant même en taille la planète Mercure. Elle possède la particularité unique dans le monde des satellites d'arborer un champ magnétique propre, généré par la convection de son noyau métallique. Sa surface combine des régions sombres très anciennes criblées de cratères et des terrains plus clairs sillonnés de rainures tectoniques complexes.",
       cutaway: [{ name: "Noyau", radius: 0.35, color: "#dc2626", temp: "1 800 K" }, { name: "Océans & Glace", radius: 1.00, color: "#94a3b8", temp: "110 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "5 268 km" }, { label: "Magnétisme", val: "Intrinsèque" }],
@@ -822,11 +821,10 @@
       geophysics: "Tectonique de surface ancienne et champ magnétique dipolaire intrinsèque.", magnetism: "Intrinsèque.", geoMetrics: [{ label: "Masse", val: "0,025 x Terre" }],
       gasComposition: [{ name: "Oxygène", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère d'oxygène.", climate: "-163 °C.",
       atmoMetrics: [{ label: "Pression", val: "10⁻¹² bar" }], orbit: "Orbite en 7,15 jours.", orbitSemiMajor: 0.0071, orbitEccentricity: 0.0013,
-      orbitMetrics: [{ label: "Distance", val: "1 070 400 km" }], missions: [{ year: "2023", name: "JUICE", note: "Étude géophysique des lunes glacées par l'ESA." }],
-      pois: getGanymedePOIs()
+      orbitMetrics: [{ label: "Distance", val: "1 070 400 km" }], missions: [{ year: "2023", name: "JUICE", note: "Étude géophysique des lunes glacées par l'ESA." }]
     },
     "Callisto": {
-      name: "Callisto", type: "Lune cratérisée", scale: 0.38, color: 0x5a544b, texture: LUNE_TEX_URL,
+      name: "Callisto", type: "Lune cratérisée", scale: 0.38, color: 0x5a544b, texture: CALLISTO_TEX_URL,
       desc: "Callisto est la plus externe des quatre lunes galiléennes de Jupiter. Sa surface est le paysage le plus intensément cratérisé de tout le système solaire, témoignant d'une inactivité géologique globale sur des milliards d'années. Contrairement à ses sœurs Io et Europa, Callisto n'a pas subi de réchauffement par marée intense, conservant une structure presque entièrement indifférenciée tout en abritant potentiellement un océan salé profond.",
       cutaway: [{ name: "Mélange roche/glace", radius: 0.85, color: "#78350f", temp: "200 K" }, { name: "Glace", radius: 1.00, color: "#57534e", temp: "120 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "4 820 km" }, { label: "Valhalla", val: "3 800 km" }],
@@ -865,8 +863,7 @@
       orbit: "Rotation en 9h 55min. Révolue en 11,86 ans.",
       orbitSemiMajor: 5.204, orbitEccentricity: 0.0489,
       orbitMetrics: [{ label: "Périhélie", val: "740,5 M km" }, { label: "Aphélie", val: "816,6 M km" }],
-      missions: [{ year: "2016", name: "Juno", note: "Découverte des cyclones polaires et de la structure interne par la NASA." }],
-      pois: getJupiterPOIs()
+      missions: [{ year: "2016", name: "Juno", note: "Découverte des cyclones polaires et de la structure interne par la NASA." }]
     },
     "Saturne": {
       name: "Saturne", type: "Géante gazeuse aux anneaux", scale: 9.4, color: 0xe2bf7d, texture: SATURN_TEX_URL, hasRings: true,
@@ -900,7 +897,7 @@
       missions: [{ year: "2004", name: "Cassini-Huygens", note: "Exploration approfondie du système saturnien par la NASA et l'ESA." }]
     },
     "Titan": {
-      name: "Titan", type: "Lune à atmosphère dense", scale: 0.40, color: 0xd28d34, texture: VENUS_ATM_URL,
+      name: "Titan", type: "Lune à atmosphère dense", scale: 0.40, color: 0xd28d34, texture: TITAN_TEX_URL,
       desc: "Titan est la plus grande lune de Saturne et le seul satellite du système solaire doté d'une atmosphère épaisse et brumeuse (riche en azote et tholines). Sa surface est le théâtre d'un cycle météorologique complet analogue à celui de la Terre, mais basé sur le méthane et l'éthane liquides plutôt que sur l'eau : on y trouve des rivières, des lacs et de vastes mers polaires d'hydrocarbures.",
       cutaway: [
         { name: "Cœur silicaté dense", radius: 0.50, color: "#71717a", temp: "1 800 K" },
@@ -923,7 +920,7 @@
       probes: getTitanProbes()
     },
     "Encelade": {
-      name: "Encelade", type: "Lune cryovolcanique", scale: 0.04, color: 0xf0f8ff, texture: S3_CDN + "europa.jpg",
+      name: "Encelade", type: "Lune cryovolcanique", scale: 0.04, color: 0xf0f8ff, texture: ENCELADE_TEX_URL,
       desc: "Encelade est une petite lune glacée de Saturne qui présente l'un des albédos les plus élevés du système solaire, réfléchissant presque toute la lumière reçue. Sa découverte majeure réside en la présence de geysers actifs jaillissant au pôle Sud à travers des failles (« rayures de tigre »). Ces geysers éjectent de la vapeur d'eau, des sels minéraux et des molécules organiques complexes issues d'un océan liquide sous-glaciaire chauffé par des sources hydrothermales.",
       cutaway: [
         { name: "Noyau rocheux poreux", radius: 0.60, color: "#71717a", temp: "300 K" },
@@ -942,8 +939,7 @@
       orbit: "Orbite de 33 heures autour de Saturne.",
       orbitSemiMajor: 0.0015, orbitEccentricity: 0.0047,
       orbitMetrics: [{ label: "Distance Saturne", val: "238 000 km" }, { label: "Période", val: "33 heures" }],
-      missions: [{ year: "2005", name: "Cassini", note: "Découverte des geysers organiques par la NASA." }],
-      pois: getEnceladusPOIs()
+      missions: [{ year: "2005", name: "Cassini", note: "Découverte des geysers organiques par la NASA." }]
     },
     "Uranus": {
       name: "Uranus", type: "Géante de glaces inclinée", scale: 4.0, color: 0x68b9c7, texture: URANUS_TEX_URL,
@@ -1006,7 +1002,7 @@
       missions: [{ year: "1989", name: "Voyager 2", note: "Survol historique et découverte des geysers de Triton." }]
     },
     "Pluton": {
-      name: "Pluton", type: "Planète naine (Kuiper)", scale: 0.18, color: 0xb59e82, texture: S3_CDN + "pluto.jpg",
+      name: "Pluton", type: "Planète naine (Kuiper)", scale: 0.18, color: 0xb59e82, texture: PLUTON_TEX_URL,
       desc: "Pluton est un monde glacé fascinant situé dans les confins de la ceinture de Kuiper. Longtemps considérée comme la neuvième planète, elle a été reclassée en planète naine en 2006. Son exploration en 2015 par la sonde New Horizons a révélé une géologie étonnamment active, avec de hautes montagnes de glace d'eau, des dunes de tholines et surtout Sputnik Planitia, un immense glacier de diazote mou qui subit des mouvements de convection.",
       cutaway: [
         { name: "Noyau rocheux", radius: 0.70, color: "#71717a", temp: "600 K" },
@@ -1033,11 +1029,10 @@
       orbit: "Orbite inclinée (17,16°) et très excentrique.",
       orbitSemiMajor: 39.48, orbitEccentricity: 0.2488,
       orbitMetrics: [{ label: "Périhélie", val: "4,44 Md km" }, { label: "Aphélie", val: "7,38 Md km" }],
-      missions: [{ year: "2015", name: "New Horizons", note: "Survol historique rasant et cartographie détaillée par la NASA." }],
-      pois: getPlutoPOIs()
+      missions: [{ year: "2015", name: "New Horizons", note: "Survol historique rasant et cartographie détaillée par la NASA." }]
     },
     "Cérès": {
-      name: "Cérès", type: "Planète naine (Astéroïde géant)", scale: 0.08, color: 0x94a3b8, texture: S3_CDN + "pluto.jpg",
+      name: "Cérès", type: "Planète naine (Astéroïde géant)", scale: 0.08, color: 0x94a3b8, texture: PLUTON_TEX_URL,
       desc: "Cérès est le plus grand objet de la ceinture principale d'astéroïdes et la seule planète naine située dans le système solaire interne. Découverte en 1801, elle contient d'importantes quantités d'eau sous forme de glace mélangée à des minéraux hydratés et des carbonates. Son cratère Occator abrite de mystérieux dépôts de sels extrêmement brillants qui ont captivé les astronomes lors de la mission Dawn.",
       cutaway: [{ name: "Noyau rocheux", radius: 0.60, color: "#475569", temp: "160 K" }, { name: "Manteau boueux", radius: 1.00, color: "#64748b", temp: "140 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "946 km" }, { label: "Masse", val: "9,39 × 10²⁰ kg" }],
@@ -1045,11 +1040,10 @@
       geophysics: "Présence de saumures et de sels minéraux piégés en profondeur remontant par cryovolcanisme.", magnetism: "Nul.", geoMetrics: [{ label: "Ahuna Mons", val: "4 km" }],
       gasComposition: [{ name: "Vapeur d'eau", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère éphémère de vapeur d'eau.", climate: "-105 °C.",
       atmoMetrics: [{ label: "Pression", val: "0 Pa" }], orbit: "Ceinture principale d'astéroïdes.", orbitSemiMajor: 2.767, orbitEccentricity: 0.079,
-      orbitMetrics: [{ label: "Période", val: "4,6 ans" }], missions: [{ year: "2015", name: "Dawn (NASA)", note: "Mise en orbite et analyse minéralogique." }],
-      pois: getCeresPOIs()
+      orbitMetrics: [{ label: "Période", val: "4,6 ans" }], missions: [{ year: "2015", name: "Dawn (NASA)", note: "Mise en orbite et analyse minéralogique." }]
     },
     "Vesta": {
-      name: "Vesta", type: "Astéroïde géant différencié", scale: 0.04, color: 0x78716c, texture: S3_CDN + "pluto.jpg",
+      name: "Vesta", type: "Astéroïde géant différencié", scale: 0.04, color: 0x78716c, texture: PLUTON_TEX_URL,
       desc: "Vesta est l'un des plus massifs astéroïdes de la ceinture principale. Contrairement à la plupart des astéroïdes, Vesta est un corps différencié, possédant une structure interne stratifiée avec un noyau métallique, un manteau rocheux et une croûte basaltique, ce qui en fait une sorte de « protoplanète » fossile. Son pôle Sud est dominé par Rheasilvia, un cratère d'impact colossal dont l'onde de choc a traversé tout l'astéroïde.",
       cutaway: [{ name: "Noyau Fe-Ni", radius: 0.35, color: "#dc2626", temp: "300 K" }, { name: "Manteau", radius: 0.85, color: "#d97706", temp: "220 K" }, { name: "Croûte basaltique", radius: 1.00, color: "#78716c", temp: "150 K" }],
       overviewMetrics: [{ label: "Diamètre", val: "525 km" }, { label: "Bassin Rheasilvia", val: "505 km" }],
@@ -1057,8 +1051,7 @@
       geophysics: "Corps rocheux différencié avec noyau métallique et d'immenses failles de compression équatoriales.", magnetism: "Ancien paléomagnétisme enregistré dans les roches.", geoMetrics: [{ label: "Rheasilvia", val: "Profondeur 19 km" }],
       gasComposition: [{ name: "Vide", pct: 100, color: "#334155" }], atmosphere: "Nulle.", climate: "-110 °C à -20 °C.",
       atmoMetrics: [{ label: "Pression", val: "0 Pa" }], orbit: "Ceinture principale d'astéroïdes.", orbitSemiMajor: 2.362, orbitEccentricity: 0.088,
-      orbitMetrics: [{ label: "Période", val: "3,63 ans" }], missions: [{ year: "2011", name: "Dawn (NASA)", note: "Cartographie complète de la surface par la sonde." }],
-      pois: getVestaPOIs()
+      orbitMetrics: [{ label: "Période", val: "3,63 ans" }], missions: [{ year: "2011", name: "Dawn (NASA)", note: "Cartographie complète de la surface par la sonde." }]
     }
   };
 
@@ -1074,22 +1067,22 @@
       id: "Mars", name: "Mars", radius: 1.0, dist: 41, speed: 0.012, color: 0xc1440e, texture: MARS_TEX_URL, 
       moons: [{ id: "Phobos", name: "Phobos", radius: 0.2, dist: 2.2, speed: 0.06, color: 0x5a5550 }] 
     },
-    { id: "Vesta", name: "Vesta", radius: 0.45, dist: 48, speed: 0.010, color: 0x78716c, texture: S3_CDN + "pluto.jpg" },
-    { id: "Cérès", name: "Cérès", radius: 0.55, dist: 52, speed: 0.009, color: 0x94a3b8, texture: S3_CDN + "pluto.jpg" },
+    { id: "Vesta", name: "Vesta", radius: 0.45, dist: 48, speed: 0.010, color: 0x78716c, texture: PLUTON_TEX_URL },
+    { id: "Cérès", name: "Cérès", radius: 0.55, dist: 52, speed: 0.009, color: 0x94a3b8, texture: PLUTON_TEX_URL },
     { 
       id: "Jupiter", name: "Jupiter", radius: 3.0, dist: 64, speed: 0.007, color: 0xd4a373, texture: JUPITER_TEX_URL,
       moons: [
-        { id: "Io", name: "Io", radius: 0.3, dist: 4.8, speed: 0.05, color: 0xd4b333, texture: S3_CDN + "io.jpg" },
-        { id: "Europe", name: "Europe", radius: 0.28, dist: 6.0, speed: 0.038, color: 0xb0c4de, texture: S3_CDN + "europa.jpg" },
-        { id: "Ganymede", name: "Ganymède", radius: 0.4, dist: 7.4, speed: 0.028, color: 0x857e74, texture: LUNE_TEX_URL },
-        { id: "Callisto", name: "Callisto", radius: 0.38, dist: 9.0, speed: 0.02, color: 0x5a544b, texture: LUNE_TEX_URL }
+        { id: "Io", name: "Io", radius: 0.3, dist: 4.8, speed: 0.05, color: 0xd4b333, texture: IO_TEX_URL },
+        { id: "Europe", name: "Europe", radius: 0.28, dist: 6.0, speed: 0.038, color: 0xb0c4de, texture: EUROPE_TEX_URL },
+        { id: "Ganymede", name: "Ganymède", radius: 0.4, dist: 7.4, speed: 0.028, color: 0x857e74, texture: GANYMEDE_TEX_URL },
+        { id: "Callisto", name: "Callisto", radius: 0.38, dist: 9.0, speed: 0.02, color: 0x5a544b, texture: CALLISTO_TEX_URL }
       ]
     },
     { 
       id: "Saturne", name: "Saturne", radius: 2.5, dist: 82, speed: 0.005, color: 0xe2bf7d, texture: SATURN_TEX_URL, hasRings: true,
       moons: [
-        { id: "Titan", name: "Titan", radius: 0.38, dist: 5.2, speed: 0.032, color: 0xd28d34, texture: VENUS_ATM_URL },
-        { id: "Encelade", name: "Encelade", radius: 0.2, dist: 4.0, speed: 0.045, color: 0xf0f8ff, texture: S3_CDN + "europa.jpg" }
+        { id: "Titan", name: "Titan", radius: 0.38, dist: 5.2, speed: 0.032, color: 0xd28d34, texture: TITAN_TEX_URL },
+        { id: "Encelade", name: "Encelade", radius: 0.2, dist: 4.0, speed: 0.045, color: 0xf0f8ff, texture: ENCELADE_TEX_URL }
       ]
     },
     { 
@@ -1100,7 +1093,7 @@
       id: "Neptune", name: "Neptune", radius: 1.8, dist: 116, speed: 0.0025, color: 0x2563eb, texture: NEPTUNE_TEX_URL,
       moons: [{ id: "Triton", name: "Triton", radius: 0.3, dist: 3.6, speed: -0.028, color: 0xa8b8b0, texture: LUNE_TEX_URL }] 
     },
-    { id: "Pluton", name: "Pluton", radius: 0.6, dist: 135, speed: 0.0018, color: 0xb59e82, texture: S3_CDN + "pluto.jpg", incline: 0.29 }
+    { id: "Pluton", name: "Pluton", radius: 0.6, dist: 135, speed: 0.0018, color: 0xb59e82, texture: PLUTON_TEX_URL, incline: 0.29 }
   ];
 
   let scene, camera, renderer, controls;
@@ -1131,9 +1124,6 @@
   let venusAtmTex = null;
   let venusSolTex = null;
   let isVenusSolView = false;
-
-  const textureLoader = new THREE.TextureLoader();
-  textureLoader.setCrossOrigin('anonymous');
 
   function createDotTexture() {
     const canvas = document.createElement('canvas');
@@ -1288,7 +1278,6 @@
     scene.add(ambientLightRef);
     applyLightingConfig(false);
 
-    // Matérialisation discrète des ceintures d'astéroïdes et de Kuiper (points uniquement, sans étiquettes)
     buildAsteroids(47, 53, 90, 0x94a3b8);
     buildAsteroids(115, 128, 110, 0x64748b);
 
@@ -1392,11 +1381,17 @@
       }
     });
 
+    const SYSTEM_SOLAR_CARD = {
+      name: "Système Solaire", type: "Cortège Héliocentrique",
+      desc: "Le système solaire est constitué du Soleil et de tous les astéroïdes, planètes, planètes naines et comètes qui gravitent autour de lui sous l'effet de sa gravitation."
+    };
     openPlanetCard(SYSTEM_SOLAR_CARD);
     startLoop();
   }
 
   const cameraOffset = new THREE.Vector3();
+  const worldPos = new THREE.Vector3();
+  const prevWorldPos = new THREE.Vector3();
 
   function focusOnBody(id) {
     const entity = globalEntities.find(e => e.mesh.userData.id === id);
@@ -1412,7 +1407,7 @@
       controls.target.copy(worldPos);
 
       document.getElementById("body-selector").value = id;
-      openPlanetCard(CATALOG[id] || SYSTEM_SOLAR_CARD);
+      openPlanetCard(CATALOG[id] || { name: id, type: "Astres", desc: "Informations générales sur " + id });
     }
   }
 
@@ -1679,6 +1674,7 @@
 
     if (tabKey === 'orbit') {
       const curId = document.getElementById("body-selector").value;
+      const SYSTEM_SOLAR_CARD = { name: "Système Solaire", type: "Cortège Héliocentrique", desc: "" };
       const data = curId ? (CATALOG[curId] || SYSTEM_SOLAR_CARD) : SYSTEM_SOLAR_CARD;
       drawOrbitCanvas(data);
     }
@@ -1935,9 +1931,6 @@
     });
     scene.add(new THREE.Points(geo, mat));
   }
-
-  const worldPos = new THREE.Vector3();
-  const prevWorldPos = new THREE.Vector3();
 
   function startLoop() {
     function loop() {
