@@ -159,18 +159,21 @@
     .poi-volcano { background: rgba(50, 10, 10, 0.92); border: 1px solid #ef4444; color: #fca5a5; }
     .poi-crater  { background: rgba(50, 25, 8, 0.92); border: 1px solid #f97316; color: #fdba74; }
     .poi-corona  { background: rgba(45, 15, 55, 0.92); border: 1px solid #c084fc; color: #e9d5ff; }
+    .poi-valley  { background: rgba(10, 40, 50, 0.92); border: 1px solid #38bdf8; color: #7dd3fc; }
+    .poi-mare    { background: rgba(15, 25, 45, 0.92); border: 1px solid #60a5fa; color: #bfdbfe; }
 
+    /* Croix verte pour les missions au sol */
     .probe-marker {
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       transform: translate(-50%, -50%);
       cursor: pointer;
       pointer-events: auto;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 900;
       color: #10b981;
       text-shadow: 0 0 4px #000, 0 0 8px rgba(16, 185, 129, 0.8);
@@ -580,7 +583,7 @@
   const URANUS_TEX_URL  = GITHUB_CDN_BASE + "Uranus.jpg";
   const LUNE_TEX_URL    = GITHUB_CDN_BASE + "lune.jpg";
 
-  // Nouveaux liens raw pour les lunes, anneaux et corps demandés
+  // Textures demandées (Callisto, Encelade, Europe, Ganymède, Io, Pluton, Anneaux de Saturne, Titan)
   const CALLISTO_TEX_URL  = LUNES_CDN_BASE + "Callisto.png";
   const ENCELADE_TEX_URL  = LUNES_CDN_BASE + "Enselade.webp";
   const EUROPE_TEX_URL    = LUNES_CDN_BASE + "Europe.png";
@@ -608,21 +611,28 @@
   textureLoader.setCrossOrigin('anonymous');
 
   function createSaturnRingTexture() {
-    const tex = textureLoader.load(SATURN_RING_URL, (t) => {
+    return textureLoader.load(SATURN_RING_URL, (t) => {
       t.needsUpdate = true;
     });
-    return tex;
   }
   const saturnRingTexture = createSaturnRingTexture();
 
-  // POI & Missions de la Lune
-  function getMoonPOIs() {
-    return [
-      { name: "Cratère Copernic", lat: 9.6, lon: -20.1, prio: 1, type: "Cratère à rayons majeurs", cat: "crater", css: "poi-crater", desc: "Archétype du cratère d'impact lunaire (93 km), ceinturé d'un immense réseau d'éjectas clairs rayonnant sur des centaines de kilomètres à la surface de la Lune.", img: driveUrl("1b6I3hvgQfkuxqGldTmQE6tT8o9kb_4y0") },
-      { name: "Cratère Tycho", lat: -43.3, lon: -11.2, prio: 1, type: "Cratère rayonnant majeur", cat: "crater", css: "poi-crater", desc: "Cratère d'impact splendide célèbre pour ses rayons clairs traversant tout l'hémisphère sud lunaire.", img: driveUrl("1mSXwF3QXvK-wFZUsACg3DIoK7T2f-lYR") }
-    ];
+  function createDotTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+    grad.addColorStop(0.5, 'rgba(180, 220, 255, 0.7)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 16, 16);
+    return new THREE.CanvasTexture(canvas);
   }
+  const dotTexture = createDotTexture();
 
+  // Listes des missions au sol demandées (croix vertes)
   function getMoonProbes() {
     return [
       { name: "Luna 2 (URSS, 1959)", lat: 29.1, lon: 0.0, desc: "Premier objet artificiel à atteindre la surface de la Lune (impact intentionnel)." },
@@ -643,13 +653,6 @@
     ];
   }
 
-  // POI & Missions de Vénus
-  function getVenusPOIs() {
-    return [
-      { name: "Montes Maxwell", lat: 65.2, lon: 3.3, prio: 1, type: "Chaîne de montagnes", cat: "volcano", css: "poi-volcano", desc: "La plus haute chaîne de montagnes de Vénus (culminant à près de 11 km).", img: driveUrl("1RNxFXrmlvpPlNz7E4JQYldQl_hF0RT8u") }
-    ];
-  }
-
   function getVenusProbes() {
     return [
       { name: "Venera 7 (URSS, 1970)", lat: -5.0, lon: 351.0, desc: "Premier atterrissage réussi et transmission de données depuis la surface de Vénus." },
@@ -662,18 +665,11 @@
     ];
   }
 
-  // POI & Missions de Mars
-  function getMarsPOIs() {
-    return [
-      { name: "Mons Olympus", lat: 18.65, lon: 226.2, prio: 1, type: "Volcan bouclier géant", cat: "volcano", css: "poi-volcano", desc: "Le plus haut volcan du système solaire (~22 km d'altitude, 600 km de diamètre).", img: driveUrl("1j8bzpV8v7px7wwlbv4oBZBlFpP7G0QKJ") }
-    ];
-  }
-
   function getMarsProbes() {
     return [
       { name: "Mars 3 (URSS, 1971)", lat: -45.0, lon: 158.0, desc: "Premier atterrisseur à poser un module sur Mars (signal coupé après 20 secondes)." },
       { name: "Viking 1 (USA, 1976)", lat: 22.48, lon: 310.03, desc: "Premier succès complet d'une mission de longue durée à la surface de Mars (Chryse Planitia)." },
-      { name: "Viking 2 (USA, 1976)", lat: 48.27, lon: 134.26, desc: "Atterrissage à Utopia Planitia, analyses biologiques et météorologiques." },
+      { name: "Viking 2 (USA, 1976)", lat: 48.27, lon: 134.26, desc: "Atterrisseurs et analyses météorologiques à Utopia Planitia." },
       { name: "Mars Pathfinder (USA, 1997)", lat: 19.33, lon: 326.45, desc: "Première utilisation d'un rover mobile (Sojourner) à la surface martienne." },
       { name: "Spirit (USA, 2004)", lat: -14.57, lon: 184.52, desc: "Rover explorant le cratère Gusev à la recherche de passé aqueux." },
       { name: "Opportunity (USA, 2004)", lat: -1.95, lon: 5.53, desc: "Rover ayant parcouru plus de 45 km à Meridiani Planum." },
@@ -685,14 +681,13 @@
     ];
   }
 
-  // Missions Titan
   function getTitanProbes() {
     return [
       { name: "Huygens (ESA, 2005)", lat: -10.2, lon: 167.6, desc: "Premier et unique atterrissage réussi sur une lune externe du système solaire (Adiri)." }
     ];
   }
 
-  // Fiches encyclopédiques enrichies (long-format)
+  // POI & Fiches encyclopédiques enrichies (formats longs et détaillés)
   const CATALOG = {
     "Soleil": {
       name: "Soleil", type: "Étoile naine jaune (G2V)", scale: 109, color: 0xffaa00, texture: SUN_URL, isSun:true,
@@ -740,7 +735,7 @@
       atmosphere: "92 bars avec un phénomène de super-rotation atmosphérique ultrarapide.", climate: "465 °C constants.", atmoMetrics: [{ label: "Pression", val: "92 bars" }],
       orbit: "Rotation rétrograde lente en 243 jours.", orbitSemiMajor: 0.723, orbitEccentricity: 0.0067, orbitMetrics: [{ label: "Périhélie", val: "107,5 M km" }],
       missions: [{ year: "1990", name: "Magellan", note: "Cartographie radar globale de la surface." }],
-      pois: getVenusPOIs(), probes: getVenusProbes()
+      probes: getVenusProbes()
     },
     "Terre": {
       name: "Terre", type: "Planète tellurique océanique", scale: 1.0, color: 0x2277ff, texture: TERRE_TEX_URL,
@@ -764,7 +759,7 @@
       gasComposition: [{ name: "Hélium-4", pct: 50.0, color: "#fbbf24" }], atmosphere: "Exosphère ultra-ténue.", climate: "-130 °C à +120 °C.",
       atmoMetrics: [{ label: "Pression", val: "~10⁻¹² bar" }], orbit: "Rotation synchrone.", orbitSemiMajor: 0.00257, orbitEccentricity: 0.0549,
       orbitMetrics: [{ label: "Périgée", val: "362 600 km" }], missions: [{ year: "1969", name: "Apollo 11", note: "Premiers pas humains sur un autre monde." }],
-      pois: getMoonPOIs(), probes: getMoonProbes()
+      probes: getMoonProbes()
     },
     "Mars": {
       name: "Mars", type: "Planète tellurique désertique", scale: 0.53, color: 0xc1440e, texture: MARS_TEX_URL,
@@ -777,7 +772,7 @@
       atmosphere: "Atmosphère fine de dioxyde de carbone (6,1 mbar).", climate: "-63 °C de moyenne.", atmoMetrics: [{ label: "Pression", val: "6,1 mbar" }],
       orbit: "Révolution en 687 jours terrestres.", orbitSemiMajor: 1.524, orbitEccentricity: 0.0934, orbitMetrics: [{ label: "Périhélie", val: "206,7 M km" }],
       missions: [{ year: "2021", name: "Perseverance", note: "Échantillonnage et recherche de biosignatures dans le cratère Jezero." }],
-      pois: getMarsPOIs(), probes: getMarsProbes()
+      probes: getMarsProbes()
     },
     "Phobos": {
       name: "Phobos", type: "Lune martienne", scale: 0.02, color: 0x5a5550, isIrregular: true,
@@ -1125,21 +1120,6 @@
   let venusSolTex = null;
   let isVenusSolView = false;
 
-  function createDotTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 16;
-    canvas.height = 16;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    grad.addColorStop(0.5, 'rgba(180, 220, 255, 0.7)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 16, 16);
-    return new THREE.CanvasTexture(canvas);
-  }
-  const dotTexture = createDotTexture();
-
   const orbitalPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
@@ -1278,8 +1258,9 @@
     scene.add(ambientLightRef);
     applyLightingConfig(false);
 
-    buildAsteroids(47, 53, 90, 0x94a3b8);
-    buildAsteroids(115, 128, 110, 0x64748b);
+    // Matérialisation des zones d'astéroïdes et de Kuiper sans étiquettes (points uniquement)
+    buildAsteroids(47, 53, 120, 0x94a3b8);
+    buildAsteroids(115, 130, 150, 0x64748b);
 
     globalEntities = [];
     globalOrbits = [];
@@ -1381,10 +1362,6 @@
       }
     });
 
-    const SYSTEM_SOLAR_CARD = {
-      name: "Système Solaire", type: "Cortège Héliocentrique",
-      desc: "Le système solaire est constitué du Soleil et de tous les astéroïdes, planètes, planètes naines et comètes qui gravitent autour de lui sous l'effet de sa gravitation."
-    };
     openPlanetCard(SYSTEM_SOLAR_CARD);
     startLoop();
   }
@@ -1407,7 +1384,7 @@
       controls.target.copy(worldPos);
 
       document.getElementById("body-selector").value = id;
-      openPlanetCard(CATALOG[id] || { name: id, type: "Astres", desc: "Informations générales sur " + id });
+      openPlanetCard(CATALOG[id] || SYSTEM_SOLAR_CARD);
     }
   }
 
@@ -1456,7 +1433,7 @@
     }
 
     const probesToggleBtn = document.getElementById("btn-toggle-probes");
-    if (data.probes && data.probes.length > 0) {
+    if (id === "Lune" || id === "Vénus" || id === "Mars" || id === "Titan") {
       probesToggleBtn.style.display = "inline-flex";
       probesVisible = true;
       probesToggleBtn.innerText = "🟢 Sondes au sol : On";
@@ -1589,30 +1566,33 @@
         });
 
         labelsCont.appendChild(el);
-        studioPois.push({ element: el, localPos: pos, poi: poi, priority: poi.priority || 1 });
+        studioPois.push({ element: el, localPos: pos, poi: poi, priority: poi.priority || 1, type: 'poi' });
       });
     }
 
-    studioProbes = [];
-    if (data.probes) {
-      const labelsCont = document.getElementById("labels-container");
-      data.probes.forEach(probe => {
-        const pos = latLonToVector3(probe.lat, probe.lon, radius);
-        const el = document.createElement("div");
-        el.className = `probe-marker`;
-        el.textContent = "✚";
-        el.style.opacity = '0';
-        el.style.pointerEvents = 'none';
+    // Ajout des sondes au sol sous forme de croix vertes cliquables
+    let probesList = [];
+    if (id === "Lune") probesList = getMoonProbes();
+    else if (id === "Vénus") probesList = getVenusProbes();
+    else if (id === "Mars") probesList = getMarsProbes();
+    else if (id === "Titan") probesList = getTitanProbes();
 
-        el.addEventListener("pointerdown", (e) => {
-          e.stopPropagation();
-          openProbeCard(probe);
-        });
+    probesList.forEach(probe => {
+      const pos = latLonToVector3(probe.lat, probe.lon, radius);
+      const el = document.createElement("div");
+      el.className = "probe-marker";
+      el.textContent = "✚";
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
 
-        labelsCont.appendChild(el);
-        studioProbes.push({ element: el, localPos: pos, probe: probe });
+      el.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+        openProbeCard(probe);
       });
-    }
+
+      document.getElementById("labels-container").appendChild(el);
+      studioPois.push({ element: el, localPos: pos, probe: probe, priority: 1, type: 'probe' });
+    });
 
     openPlanetCard(data);
     startLoop();
@@ -1628,8 +1608,8 @@
     probesVisible = !probesVisible;
     const btn = document.getElementById("btn-toggle-probes");
     btn.innerText = `🟢 Sondes au sol : ${probesVisible ? 'On' : 'Off'}`;
-    studioProbes.forEach(item => {
-      if (!probesVisible) {
+    studioPois.forEach(item => {
+      if (item.type === 'probe' && !probesVisible) {
         item.element.style.opacity = '0';
         item.element.style.pointerEvents = 'none';
       }
@@ -1674,7 +1654,6 @@
 
     if (tabKey === 'orbit') {
       const curId = document.getElementById("body-selector").value;
-      const SYSTEM_SOLAR_CARD = { name: "Système Solaire", type: "Cortège Héliocentrique", desc: "" };
       const data = curId ? (CATALOG[curId] || SYSTEM_SOLAR_CARD) : SYSTEM_SOLAR_CARD;
       drawOrbitCanvas(data);
     }
@@ -1970,58 +1949,45 @@
 
         const camDistance = camera.position.distanceTo(controls.target);
 
-        if (poisVisible) {
-          studioPois.forEach(item => {
-            const poiWorld = item.localPos.clone().applyMatrix4(studioMesh.matrixWorld);
-            const eyeVec = camera.position.clone().sub(poiWorld).normalize();
-            const normal = poiWorld.clone().normalize();
-            const dot = normal.dot(eyeVec);
+        studioPois.forEach(item => {
+          if (item.type === 'poi' && !poisVisible) {
+            item.element.style.opacity = '0';
+            item.element.style.pointerEvents = 'none';
+            return;
+          }
+          if (item.type === 'probe' && !probesVisible) {
+            item.element.style.opacity = '0';
+            item.element.style.pointerEvents = 'none';
+            return;
+          }
 
-            let isVisibleLOD = false;
-            if (camDistance <= 2.2) {
-              isVisibleLOD = true;
-            } else if (camDistance <= 3.2) {
-              isVisibleLOD = (item.priority <= 2);
-            } else {
-              isVisibleLOD = (item.priority === 1);
-            }
+          const worldCoord = item.localPos.clone().applyMatrix4(studioMesh.matrixWorld);
+          const eyeVec = camera.position.clone().sub(worldCoord).normalize();
+          const normal = worldCoord.clone().normalize();
+          const dot = normal.dot(eyeVec);
 
-            if (dot > 0.22 && isVisibleLOD) {
-              const screenPos = poiWorld.clone().project(camera);
-              const x = (screenPos.x * 0.5 + 0.5) * stageW;
-              const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
+          let isVisibleLOD = true;
+          if (item.type === 'poi') {
+            if (camDistance <= 2.2) isVisibleLOD = true;
+            else if (camDistance <= 3.2) isVisibleLOD = (item.priority <= 2);
+            else isVisibleLOD = (item.priority === 1);
+          } else if (item.type === 'probe') {
+            isVisibleLOD = (camDistance <= 3.5);
+          }
 
-              item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-              item.element.style.opacity = '1';
-              item.element.style.pointerEvents = 'auto';
-            } else {
-              item.element.style.opacity = '0';
-              item.element.style.pointerEvents = 'none';
-            }
-          });
-        }
+          if (dot > 0.22 && isVisibleLOD) {
+            const screenPos = worldCoord.clone().project(camera);
+            const x = (screenPos.x * 0.5 + 0.5) * stageW;
+            const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
 
-        if (probesVisible) {
-          studioProbes.forEach(item => {
-            const probeWorld = item.localPos.clone().applyMatrix4(studioMesh.matrixWorld);
-            const eyeVec = camera.position.clone().sub(probeWorld).normalize();
-            const normal = probeWorld.clone().normalize();
-            const dot = normal.dot(eyeVec);
-
-            if (dot > 0.22 && camDistance <= 3.2) {
-              const screenPos = probeWorld.clone().project(camera);
-              const x = (screenPos.x * 0.5 + 0.5) * stageW;
-              const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
-
-              item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-              item.element.style.opacity = '1';
-              item.element.style.pointerEvents = 'auto';
-            } else {
-              item.element.style.opacity = '0';
-              item.element.style.pointerEvents = 'none';
-            }
-          });
-        }
+            item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+            item.element.style.opacity = '1';
+            item.element.style.pointerEvents = 'auto';
+          } else {
+            item.element.style.opacity = '0';
+            item.element.style.pointerEvents = 'none';
+          }
+        });
       }
 
       controls.update();
