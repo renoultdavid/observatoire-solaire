@@ -24,13 +24,6 @@
       overflow: hidden;
       position: relative;
     }
-    #app-container.fake-fullscreen {
-      position: fixed !important;
-      inset: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 2147483647 !important;
-    }
 
     #main-stage {
       flex: 1 1 auto;
@@ -458,7 +451,6 @@
         <button id="btn-toggle-pois" style="display:none;" onclick="togglePoisVisibility()">🏷️ Étiquettes : On</button>
         <button id="btn-studio-pause" style="display:none;">⏸ Pause Rotation</button>
         <button id="btn-toggle-orbits">Orbites : On</button>
-        <button id="btn-fullscreen">⛶ Mode Immersif</button>
       </div>
     </div>
 
@@ -476,7 +468,7 @@
 
       <div class="nav-gesture-hint">
         <span>💡</span>
-        <span><strong>1 clic :</strong> Centrer / Verrouiller &nbsp;|&nbsp; <strong>Double-clic :</strong> Zoom Studio & Étiquettes</span>
+        <span><strong>1 clic :</strong> Centrer / Verrouiller &nbsp;|&nbsp; <strong>Double-clic (Astre ou Nom) :</strong> Zoom Studio & Étiquettes</span>
       </div>
 
       <div class="badge-container">
@@ -1265,8 +1257,8 @@
     applyLightingConfig(false);
 
     buildStarfield();
-    buildAsteroids(47, 53, 200, 0x94a3b8);
-    buildAsteroids(115, 128, 250, 0x64748b);
+    buildAsteroids(47, 53, 120, 0x94a3b8);
+    buildAsteroids(115, 128, 150, 0x64748b);
 
     const labelsCont = document.getElementById("labels-container");
 
@@ -1343,6 +1335,11 @@
       const label = document.createElement("div");
       label.className = "global-label";
       label.textContent = p.name;
+      // Double-clic sur l'étiquette de nom pour basculer en mode Studio
+      label.addEventListener("dblclick", (e) => {
+        e.stopPropagation();
+        if (CATALOG[p.id]) launchStudio(p.id);
+      });
       label.addEventListener("click", (e) => {
         e.stopPropagation();
         focusOnBody(p.id);
@@ -1391,6 +1388,10 @@
           mLabel.className = "global-label";
           mLabel.textContent = m.name;
           mLabel.style.fontSize = "8px";
+          mLabel.addEventListener("dblclick", (e) => {
+            e.stopPropagation();
+            if (CATALOG[m.id]) launchStudio(m.id);
+          });
           mLabel.addEventListener("click", (e) => {
             e.stopPropagation();
             focusOnBody(m.id);
@@ -2091,16 +2092,6 @@
       globalOrbits.forEach(l => l.visible = orbitsVisible);
       orbitBtn.innerText = `Orbites : ${orbitsVisible ? 'On' : 'Off'}`;
     });
-
-    // Retour au mode faux plein écran fluide et sans erreur de chargement externe
-    const fsBtn = document.getElementById("btn-fullscreen");
-    if (fsBtn) {
-      fsBtn.addEventListener("click", () => {
-        const container = document.getElementById("app-container");
-        container.classList.toggle("fake-fullscreen");
-        setTimeout(onResize, 50);
-      });
-    }
   }
 
   function onResize() {
