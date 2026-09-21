@@ -123,7 +123,6 @@
       pointer-events: none;
     }
 
-    /* Infobulle de survol (Planétarium style) */
     #hover-tooltip {
       position: absolute;
       padding: 4px 10px;
@@ -139,21 +138,6 @@
       display: none;
       box-shadow: 0 4px 15px rgba(0,0,0,0.8);
       z-index: 25;
-    }
-
-    .belt-label {
-      position: absolute;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 9px;
-      font-weight: 700;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px dashed rgba(148, 163, 184, 0.6);
-      color: #94a3b8;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      letter-spacing: 0.5px;
     }
 
     .poi-label {
@@ -173,6 +157,7 @@
     .poi-label:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 15; }
     .poi-volcano { background: rgba(50, 10, 10, 0.92); border: 1px solid #ef4444; color: #fca5a5; }
     .poi-crater  { background: rgba(50, 25, 8, 0.92); border: 1px solid #f97316; color: #fdba74; }
+    .poi-corona  { background: rgba(45, 15, 55, 0.92); border: 1px solid #c084fc; color: #e9d5ff; }
 
     #geo-legend {
       position: absolute;
@@ -394,7 +379,7 @@
 
     <div id="top-bar">
       <div class="hud-card">
-        <div class="hud-title" id="mode-title">SYSTÈMÊ SOLAIRE</div>
+        <div class="hud-title" id="mode-title">SYSTÈME SOLAIRE</div>
         <button id="btn-back" onclick="launchGlobalMode()">⬅ Vue d'ensemble</button>
       </div>
 
@@ -432,8 +417,10 @@
             <option value="Neptune">♆ Neptune</option>
             <option value="Triton">└ Triton</option>
           </optgroup>
-          <optgroup label="9. Ceinture de Kuiper">
+          <optgroup label="9. Planètes naines & Astéroïdes">
             <option value="Pluton">♇ Pluton</option>
+            <option value="Cérès">⚪ Cérès</option>
+            <option value="Vesta">🪨 Vesta</option>
           </optgroup>
         </select>
 
@@ -466,7 +453,7 @@
 
       <div class="nav-gesture-hint">
         <span>💡</span>
-        <span><strong>Survol :</strong> Nom de l'astre &nbsp;|&nbsp; <strong>1 clic :</strong> Fiche &nbsp;|&nbsp; <strong>Double-clic :</strong> Zoom Studio</span>
+        <span><strong>Survol :</strong> Nom &nbsp;|&nbsp; <strong>1 clic :</strong> Fiche &nbsp;|&nbsp; <strong>Double-clic :</strong> Zoom Studio</span>
       </div>
 
       <div class="badge-container">
@@ -606,48 +593,475 @@
   }
   const saturnRingTexture = createSaturnRingTexture();
 
+  // Liste complète des POI de Mercure (prio 1 = majeur, prio 2 = secondaire pour zoom progressif)
   function getMercuryPOIs() {
     return [
-      { name: "Cratère Abedin", lat: 61.7, lon: 349.3, prio: 1, desc: "Cratère d'impact aux auréoles sombres et éjectas rayonnants situés dans l'hémisphère nord, caractérisé par une morphologie atypique et un fond sombres distinct.", img: driveUrl("13XlMbv-4Zkw5ypCnWCXcTZW5L6q9clPH") },
-      { name: "Cratère Abu Nuwas", lat: 17.4, lon: 20.9, prio: 1, desc: "Cratère nommé en l'honneur du célèbre poète arabe Abu Nuwas, présentant un plancher relativement plat et des terrasses de glissement internes bien préservées.", img: driveUrl("12tfV-KE7dnFa9eUswLFoJQXprpafG4dB") },
-      { name: "Cratère Africanus Horton", lat: -51.5, lon: 41.2, prio: 1, desc: "Cratère d'impact complexe de 128 km de diamètre aux remparts fortement érodés par les impacts secondaires successifs au cours des âges géologiques.", img: driveUrl("1FguUiX20zFUGBh0ovh6Ya0-4d1ngbHuD") },
-      { name: "Cratère Ahmad Baba", lat: 58.5, lon: 126.8, prio: 1, desc: "Cratère d'impact situé dans les hautes latitudes nord de Mercure, dévoilant des structures de rebond central typiques des bassins d'impact moyens.", img: driveUrl("1p-Pfdybe_eIv2yLQERHlf2SQ60QNZP7B") },
-      { name: "Cratère Ailey", lat: 45.5, lon: 182.1, prio: 1, desc: "Cratère nommé en l'honneur du chorégraphe américain Alvin Ailey, marquant une zone de transition géologique riche en matériaux éjectés clairs.", img: driveUrl("1eyK905eSMpCKAA6poaDwl-TKppU5NuAZ") },
-      { name: "Cratère Aksakov", lat: 34.7, lon: 281.3, prio: 2, desc: "Cratère d'impact de 174 km nommé en l'honneur de l'écrivain russe Sergey Aksakov, montrant un plancher intérieur marqué par de superbes structures géologiques.", img: driveUrl("1uq5ylQJmxI6DbZki3-JroVegGAKUxz-s") },
-      { name: "Cratère Akutagawa", lat: 48.2, lon: 218.9, prio: 2, desc: "Cratère d'impact de taille moyenne nommé d'après l'écrivain japonais Ryunosuke Akutagawa, situé au sein des vastes plaines lisses de l'hémisphère nord.", img: driveUrl("15UsoA6Wk84wADKv1nw0ifnB7MjXhuSaU") },
-      { name: "Cratère Al-Akhtal", lat: 59.4, lon: 260.3, prio: 2, desc: "Cratère d'impact nommé en l'honneur du poète arabe Al-Akhtal, présentant des creux géologiques brillants et caractéristiques sur ses parois internes.", img: driveUrl("1AxBRBMnqb1mDfsyym60lYf451RzBQYi4") },
-      { name: "Cratère Alencar", lat: -63.6, lon: 256.2, prio: 2, desc: "Cratère nommé en hommage au romancier brésilien José de Alencar, situé dans les régions australes et soumis à des contrastes d'ombrage marqués.", img: driveUrl("1FE4cU8sJkDYZU5u4tSjdsPwzRxjKQQJ8") },
-      { name: "Cratère Al-Hamadhani", lat: 39.2, lon: 268.2, prio: 2, desc: "Cratère d'impact d'une grande complexité géologique abritant de superbes creux (hollows) brillants découverts par la sonde MESSENGER.", img: driveUrl("1oyLOBPzOwQJW9_4aSVIhaNcwmJ7T1qxf") },
-      { name: "Cratère Al-Jāhiz", lat: 1.4, lon: 338.2, prio: 2, desc: "Cratère équatorial nommé d'après l'auteur arabe Al-Jāhiz, caractérisé par une érosion prononcée de ses rebords et des remplissages de plaines.", img: driveUrl("1X6gOlPpbaf7Z0Zu-67YCeA-NLFak7uvm") },
-      { name: "Cratère Alver", lat: -67.0, lon: 77.2, prio: 2, desc: "Cratère d'impact de 151 km situé près du pôle sud de Mercure, nommé en l'honneur de la poétesse estonienne Betti Alver.", img: driveUrl("1CkIRqbaKOR2oYnMs_Fqzk0RjKHSCF5Vy") },
-      { name: "Cratère Amaral", lat: -26.5, lon: 117.8, prio: 2, desc: "Cratère nommé d'après la peintre brésilienne Tarsila do Amaral, situé dans les hautes terres et présentant un pic central bien structuré.", img: driveUrl("16BAKPqWF9XdDudhZyYaSciImWuczh7Ut") },
-      { name: "Cratère Andal", lat: -47.5, lon: 322.3, prio: 2, desc: "Cratère d'impact nommé en l'honneur de la poétesse tamoule Andal, doté d'un fond plat et d'une morphologie typique des grands bassins anciens.", img: driveUrl("1A55otd-2ytYDj0rfbMdQujUWz27pacYm") },
-      { name: "Cratère Aneirin", lat: -27.5, lon: 357.3, prio: 2, desc: "Cratère nommé d'après le poète brittonique Aneirin, illustrant une empreinte d'impact ancienne profondément modifiée par les âges géologiques.", img: driveUrl("1CLj1x_mcR9wzrrdRMK9tEts2fgnc0aCr") },
-      { name: "Cratère Anyte", lat: 79.5, lon: 149.3, prio: 2, desc: "Cratère polaire nord nommé d'après la poétesse grecque Anyte de Tégée, niché dans des zones perpétuellement ombragées propices aux glaces.", img: driveUrl("1Sr3TSovCf7AqevbLzAPJcQEoQR2YtF4g") },
-      { name: "Cratère Apollodorus", lat: 30.5, lon: 163.3, prio: 1, desc: "Cratère brillant associé à un spectaculaire réseau de failles rayonnantes en forme d'araignée (Pantheon Fossae) au cœur du bassin Caloris.", img: driveUrl("1841aXToULRS49OmxcPsXPIUW4nz95f90") },
-      { name: "Cratère Atget", lat: 25.6, lon: 193.6, prio: 1, desc: "Cratère d'impact de 100 km situé à l'intérieur du bassin Caloris, remarquable par ses matériaux sombres et l'absence de pics centraux classiques.", img: driveUrl("176J2lIq94FLnUN_uJErb4AeHNgOIH5Ua") }
+      { name: "Cratère Abedin", lat: 61.7, lon: 349.3, prio: 1, desc: "Cratère d'impact aux auréoles sombres et éjectas rayonnants situés dans l'hémisphère nord.", img: driveUrl("13XlMbv-4Zkw5ypCnWCXcTZW5L6q9clPH") },
+      { name: "Cratère Abu Nuwas", lat: 17.4, lon: 20.9, prio: 2, desc: "Cratère nommé en l'honneur du célèbre poète arabe Abu Nuwas.", img: driveUrl("12tfV-KE7dnFa9eUswLFoJQXprpafG4dB") },
+      { name: "Cratère Africanus Horton", lat: -51.5, lon: 41.2, prio: 2, desc: "Cratère d'impact complexe de 128 km aux remparts érodés.", img: driveUrl("1FguUiX20zFUGBh0ovh6Ya0-4d1ngbHuD") },
+      { name: "Cratère Ahmad Baba", lat: 58.5, lon: 126.8, prio: 2, desc: "Cratère d'impact situé dans les hautes latitudes nord de Mercure.", img: driveUrl("1p-Pfdybe_eIv2yLQERHlf2SQ60QNZP7B") },
+      { name: "Cratère Ailey", lat: 45.5, lon: 182.1, prio: 2, desc: "Cratère nommé en l'honneur du chorégraphe Alvin Ailey.", img: driveUrl("1eyK905eSMpCKAA6poaDwl-TKppU5NuAZ") },
+      { name: "Cratère Aksakov", lat: 34.7, lon: 281.3, prio: 2, desc: "Cratère nommé en l'honneur de l'écrivain russe Sergey Aksakov.", img: driveUrl("1uq5ylQJmxI6DbZki3-JroVegGAKUxz-s") },
+      { name: "Cratère Akutagawa", lat: 48.2, lon: 218.9, prio: 2, desc: "Cratère nommé d'après l'écrivain japonais Ryunosuke Akutagawa.", img: driveUrl("15UsoA6Wk84wADKv1nw0ifnB7MjXhuSaU") },
+      { name: "Cratère Al-Akhtal", lat: 59.4, lon: 260.3, prio: 2, desc: "Cratère nommé en l'honneur du poète arabe Al-Akhtal.", img: driveUrl("1AxBRBMnqb1mDfsyym60lYf451RzBQYi4") },
+      { name: "Cratère Alencar", lat: -63.6, lon: 256.2, prio: 2, desc: "Cratère nommé en hommage au romancier brésilien José de Alencar.", img: driveUrl("1FE4cU8sJkDYZU5u4tSjdsPwzRxjKQQJ8") },
+      { name: "Cratère Al-Hamadhani", lat: 39.2, lon: 268.2, prio: 2, desc: "Cratère abritant de superbes creux brillants (hollows).", img: driveUrl("1oyLOBPzOwQJW9_4aSVIhaNcwmJ7T1qxf") },
+      { name: "Cratère Al-Jāhiz", lat: 1.4, lon: 338.2, prio: 2, desc: "Cratère équatorial nommé d'après l'auteur arabe Al-Jāhiz.", img: driveUrl("1X6gOlPpbaf7Z0Zu-67YCeA-NLFak7uvm") },
+      { name: "Cratère Alver", lat: -67.0, lon: 77.2, prio: 2, desc: "Cratère situé près du pôle sud, nommé d'après Betti Alver.", img: driveUrl("1CkIRqbaKOR2oYnMs_Fqzk0RjKHSCF5Vy") },
+      { name: "Cratère Amaral", lat: -26.5, lon: 117.8, prio: 2, desc: "Cratère nommé d'après la peintre Tarsila do Amaral.", img: driveUrl("16BAKPqWF9XdDudhZyYaSciImWuczh7Ut") },
+      { name: "Cratère Andal", lat: -47.5, lon: 322.3, prio: 2, desc: "Cratère nommé en l'honneur de la poétesse Andal.", img: driveUrl("1A55otd-2ytYDj0rfbMdQujUWz27pacYm") },
+      { name: "Cratère Aneirin", lat: -27.5, lon: 357.3, prio: 2, desc: "Cratère nommé d'après le poète brittonique Aneirin.", img: driveUrl("1CLj1x_mcR9wzrrdRMK9tEts2fgnc0aCr") },
+      { name: "Cratère Anyte", lat: 79.5, lon: 149.3, prio: 2, desc: "Cratère polaire nord nommé d'après la poétesse Anyte.", img: driveUrl("1Sr3TSovCf7AqevbLzAPJcQEoQR2YtF4g") },
+      { name: "Cratère Apollodorus", lat: 30.5, lon: 163.3, prio: 1, desc: "Cratère brillant associé au réseau de failles de Pantheon Fossae.", img: driveUrl("1841aXToULRS49OmxcPsXPIUW4nz95f90") },
+      { name: "Cratère Atget", lat: 25.6, lon: 193.6, prio: 1, desc: "Cratère d'impact de 100 km situé à l'intérieur du bassin Caloris.", img: driveUrl("176J2lIq94FLnUN_uJErb4AeHNgOIH5Ua") },
+      { name: "Cratère Bach", lat: -68.3, lon: 102.9, prio: 2, desc: "Cratère nommé en l'honneur du compositeur J.S. Bach.", img: driveUrl("1irh2VLYxR8twHA9O_Oq3YBiHoSLwGEpf") },
+      { name: "Cratère Balagtas", lat: -22.7, lon: 13.5, prio: 2, desc: "Cratère d'impact majeur de l'hémisphère sud.", img: driveUrl("1-nl-5MTWGqC9mhyE_SwJ2Vhp9eshegMD") },
+      { name: "Cratère Balanchine", lat: -27.9, lon: 211.2, prio: 2, desc: "Cratère nommé en l'honneur du chorégraphe George Balanchine.", img: driveUrl("1la7ZLa7WflGleFfGKjZAzUT88BUJ-V0C") },
+      { name: "Cratère Baranauskas", lat: 24.3, lon: 299.7, prio: 2, desc: "Cratère d'impact aux contours bien dessinés.", img: driveUrl("1fS7ZCRdbQ_eIr2cSUhCop2h5TCkJnmNi") },
+      { name: "Cratère Balzac", lat: 10.3, lon: 135.2, prio: 2, desc: "Cratère nommé d'après l'écrivain français Honoré de Balzac.", img: driveUrl("1zGvRaPeWuJtIHIUPGQ1p7belQC6JAK7L") },
+      { name: "Cratère Barma", lat: -41.5, lon: 163.7, prio: 2, desc: "Cratère d'impact nommé d'après l'architecte russe Barma.", img: driveUrl("1ynTZg9hYva9Qi-qyu0YKJUthDaW_JN0I") },
+      { name: "Cratère Bartók", lat: 31.7, lon: 144.9, prio: 2, desc: "Cratère nommé d'après le compositeur Béla Bartók.", img: driveUrl("1_hq7jA2AVg5iVgByXxs2EhplOSqASWFq") },
+      { name: "Cratère Bashō", lat: -32.5, lon: 170.8, prio: 1, desc: "Cratère remarquable pour ses éjectas sombres.", img: driveUrl("13h8a4ZcBzFSi9ELJ0757g8-ImhVGJ6v4") },
+      { name: "Cratère Beckett", lat: 13.9, lon: 251.5, prio: 2, desc: "Cratère nommé en l'honneur de Samuel Beckett.", img: driveUrl("1CxqG2l4r0q0CZngJok_7n6MOctOH52E5") },
+      { name: "Cratère Beethoven", lat: -21.3, lon: 123.6, prio: 1, desc: "L'un des plus grands bassins d'impact de Mercure (643 km).", img: driveUrl("12izhOb1rNdWYDQAZVhGu_350wqJ4keB6") },
+      { name: "Cratère Bek", lat: 18.2, lon: 143.1, prio: 2, desc: "Cratère d'impact de l'hémisphère nord.", img: driveUrl("1ypRlpes40ym4Mg6Fe1Erxjg3Fbn_adaE") },
+      { name: "Cratère Bello", lat: -16.2, lon: 105.8, prio: 2, desc: "Cratère d'impact remarquable.", img: driveUrl("1SFMn2O5JN4-GDOdbRsT_fAWjDaOyx6gd") },
+      { name: "Cratère Benoit", lat: -8.5, lon: 221.7, prio: 2, desc: "Cratère d'impact aux rebonds internes.", img: driveUrl("1gSPCvDm2yJeGWHAOv5VJ74fFtn3faEg4") },
+      { name: "Cratère Bernini", lat: -79.5, lon: 136.2, prio: 2, desc: "Cratère austral nommé d'après l'architecte Bernin.", img: driveUrl("1UpWw--V4jSVaWA0SlYVSbHYQ4WXYWWPK") },
+      { name: "Cratère Bjornson", lat: 72.8, lon: 105.5, prio: 2, desc: "Cratère polaire nord.", img: driveUrl("1wH8qfsa-7kspHqXANio7k_c2yFeYif9c") },
+      { name: "Cratère Boccaccio", lat: -9.8, lon: 30.1, prio: 2, desc: "Cratère nommé d'après l'écrivain Boccace.", img: driveUrl("1djZeBqmeICRlffCtCoOYg2D95cw2WOgZ") },
+      { name: "Cratère Boethius", lat: 14.5, lon: 121.8, prio: 2, desc: "Cratère d'impact classique.", img: driveUrl("1TBlQeKB-8G7jbjZWWxgcsiYmI48lkZcz") },
+      { name: "Cratère Botticelli", lat: 64.2, lon: 140.2, prio: 1, desc: "Cratère entouré d'éjectas brillants.", img: driveUrl("1Ox6WVdHAaxCYja1BlUaSn89yJFw7ae3d") },
+      { name: "Cratère Brahms", lat: 58.2, lon: 176.6, prio: 1, desc: "Grand bassin d'impact de 100 km.", img: driveUrl("1iZDpEsCdAnsF_rryTAy6ZLUz09ujoI2P") },
+      { name: "Cratère Bramante", lat: 47.8, lon: 61.9, prio: 2, desc: "Cratère d'impact de taille moyenne.", img: driveUrl("1MPd_8rDoz8hlyvFAK7GAaLdqPdR008DJ") },
+      { name: "Cratère Brontë", lat: 38.6, lon: 126.5, prio: 2, desc: "Cratère nommé en hommage aux sœurs Brontë.", img: driveUrl("1Nqf42DXODgLlkO6hnJ9Grd4HOVLWxhK-") },
+      { name: "Cratère Bruegel", lat: 51.5, lon: 105.5, prio: 2, desc: "Cratère nommé d'après le peintre Brueghel.", img: driveUrl("1Qa5FajPLoFfBxMsj8dclWQjt0DuNNI-_") },
+      { name: "Cratère Brunelleschi", lat: -9.2, lon: 22.2, prio: 2, desc: "Cratère d'impact aux terrasses affaissées.", img: driveUrl("1IiGAPNk4mHS75xXdGtWHqdmAW9-bySee") },
+      { name: "Cratère Burns", lat: -27.5, lon: 194.2, prio: 2, desc: "Cratère d'impact méridional.", img: driveUrl("1W76b1TXnGDjuqL9gp66IuA7eATOgo2gO") },
+      { name: "Cratère Byron", lat: -83.2, lon: 32.7, prio: 2, desc: "Cratère austral nommé d'après Lord Byron.", img: driveUrl("1B6OJvIkD1FE4cVb7JAjN7qentbOWx1Mm") },
+      { name: "Cratère Callicrates", lat: 65.5, lon: 325.2, prio: 2, desc: "Cratère de l'hémisphère nord.", img: driveUrl("1wdy1X2oY2UADLctjr6RK2U2QUqBlY8Oj") },
+      { name: "Cratère Calvino", lat: 46.5, lon: 58.5, prio: 2, desc: "Cratère nommé d'après l'écrivain Italo Calvino.", img: driveUrl("1gfVLg_s17xZgJrh6S75hB1nPdCyINRW_") },
+      { name: "Cratère Camões", lat: -71.5, lon: 69.8, prio: 2, desc: "Cratère austral.", img: driveUrl("14H9MGvVZPmMJKfL_eNIEqd2ynrUlO4El") },
+      { name: "Cratère Carducci", lat: -36.2, lon: 88.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1OZGCc66PyzXcGSYNR2UIxn0TfF7Y6Pzo") },
+      { name: "Cratère Carolan", lat: 52.5, lon: 31.2, prio: 2, desc: "Cratère nommé en l'honneur de Turlough O'Carolan.", img: driveUrl("167FHBlaN9ajgA3iR0-l3vievNIlkvUE7") },
+      { name: "Cratère Chaikovskij", lat: 16.5, lon: 50.5, prio: 2, desc: "Cratère nommé d'après le compositeur Tchaïkovski.", img: driveUrl("1_2HInb8JB7nDV5KEU8KtTk3zz-6m7tmg") },
+      { name: "Cratère Chao Meng-Fu", lat: -87.3, lon: 132.4, prio: 1, desc: "Cratère polaire sud abritant des glaces d'eau permanentes.", img: driveUrl("1WdEwtBCETyt-xivM-EjacORkZE2YhMKe") },
+      { name: "Cratère Chekhov", lat: -36.2, lon: 62.1, prio: 2, desc: "Cratère nommé d'après l'écrivain Anton Tchekhov.", img: driveUrl("1WZpheLhnKm7MJHM9yukC-NmEzVz2PQtJ") },
+      { name: "Cratère Chŏng Chʼŏl", lat: 46.8, lon: 125.2, prio: 2, desc: "Cratère d'impact septentrional.", img: driveUrl("1mYxbxfYWaeShU5EUIq3EKOLdxc4bgu19") },
+      { name: "Cratère Chopin", lat: -65.2, lon: 127.2, prio: 2, desc: "Cratère nommé d'après Frédéric Chopin.", img: driveUrl("1C6JpnrcULUT-mnlGdGr5XEWCQ6pvzmRj") },
+      { name: "Cratère Chu Ta", lat: 2.8, lon: 323.5, prio: 2, desc: "Cratère d'impact équatorial.", img: driveUrl("1llyfMv4vJgZn8zdNedWV1i7htJLgE-Vn") },
+      { name: "Cratère Coleridge", lat: -55.5, lon: 66.8, prio: 2, desc: "Cratère nommé d'après le poète Samuel Taylor Coleridge.", img: driveUrl("15vJ0V660vnYPlvbH5eIIFucVeNyMXGfS") },
+      { name: "Cratère Copland", lat: -27.8, lon: 287.5, prio: 2, desc: "Cratère nommé en l'honneur d'Aaron Copland.", img: driveUrl("13-2e-QkenbBjSKsvBxIpVkmf6ukvtPak") },
+      { name: "Cratère Copley", lat: -33.5, lon: 321.2, prio: 2, desc: "Cratère d'impact méridional.", img: driveUrl("1dY7g2CBX-06Wi8NZ96pHiTzcu47Cgr2E") },
+      { name: "Cratère Couperin", lat: 29.8, lon: 150.8, prio: 2, desc: "Cratère d'impact remarquable.", img: driveUrl("1FMEaSfEa0DAepFg85M3cEFBeZywBvrmg") },
+      { name: "Cratère Cunningham", lat: 28.5, lon: 60.2, prio: 1, desc: "Cratère rayonnant très récent.", img: driveUrl("1J91iUZ_Tm035GhQRhxwY7qAtYHuUDiIA") },
+      { name: "Cratère Dali", lat: 23.5, lon: 24.5, prio: 2, desc: "Cratère nommé d'après Salvador Dalí.", img: driveUrl("1Ewo6q0ErdKjgcQpI6t9nAHqmaQ_peH15") },
+      { name: "Cratère Darío", lat: -7.2, lon: 319.5, prio: 2, desc: "Cratère nommé d'après Rubén Darío.", img: driveUrl("1Zf7g40cVYdMuJmUTnJDXdr0LHM8ixRyo") },
+      { name: "Cratère De Graft", lat: -22.2, lon: 341.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1F2ryJoDYLPy1cxKlMZHta5REaLggjQwU") },
+      { name: "Cratère Debussy", lat: -33.9, lon: 347.5, prio: 1, desc: "Cratère aux spectaculaires éjectas brillants.", img: driveUrl("1AtU9CcEeRwd2752FLEZ3WpvCvlmTCYSP") },
+      { name: "Cratère Degas", lat: 37.5, lon: 127.2, prio: 1, desc: "Cratère rayonnant aux teintes claires.", img: driveUrl("1QRfb1qls-coxGfsD025F0cFXxhJIph24") },
+      { name: "Cratère Delacroix", lat: -44.5, lon: 27.5, prio: 2, desc: "Cratère nommé d'après Eugène Delacroix.", img: driveUrl("17CpSaZ4nFHFGbrUNZNDx_6YKkbGcQckC") },
+      { name: "Cratère Derzhavin", lat: 45.2, lon: 324.5, prio: 2, desc: "Cratère d'impact nordique.", img: driveUrl("1_9l5oBSOy-dAnhjbZ3ACGaKAtEY4Yqmi") },
+      { name: "Cratère Despréz", lat: 80.8, lon: 23.2, prio: 2, desc: "Cratère polaire nommé d'après Josquin des Prés.", img: driveUrl("1Wx04b5sHaon-d9KDnIsLu8w1sD-NVuRT") },
+      { name: "Cratère Dickens", lat: -73.5, lon: 154.2, prio: 2, desc: "Cratère austral nommé d'après Charles Dickens.", img: driveUrl("12pDbLoZ80EJFVxPtY7O4c2m_TJTFWux7") },
+      { name: "Cratère Dominici", lat: 1.2, lon: 37.5, prio: 2, desc: "Cratère d'impact équatorial.", img: driveUrl("1oIWzK1KnCfYN4KR52j1U1QIKa1SqLBEP") },
+      { name: "Cratère Donne", lat: 2.8, lon: 136.2, prio: 2, desc: "Cratère nommé d'après John Donne.", img: driveUrl("1CwsNHinPlG70T-ak19OF_g6TDz9qfh7a") },
+      { name: "Cratère Dostoevskij", lat: -44.8, lon: 176.2, prio: 1, desc: "Grand cratère complexe de 400 km.", img: driveUrl("13MDPCEc36bhnvlb9ZXyeTwqWhZRVzALW") },
+      { name: "Cratère Dowland", lat: -53.5, lon: 181.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Wtu6Ps-zJXLwPPf9FctXFiuCcWFLIzQ7") },
+      { name: "Cratère Dürer", lat: 22.2, lon: 198.8, prio: 2, desc: "Cratère nommé d'après Albrecht Dürer.", img: driveUrl("1KljlSiZMKcUOuyLeF3ZMcXXAoRUlkbB8") },
+      { name: "Cratère Dvorák", lat: 9.8, lon: 12.5, prio: 2, desc: "Cratère nommé d'après Antonín Dvořák.", img: driveUrl("1be4P0GBDaMW46coLGJGDF3FlThRYtZeD") },
+      { name: "Cratère Eastman", lat: 33.2, lon: 46.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Cp3Xla2dso4gL17s8ym-hzugNWLQv_WF") },
+      { name: "Cratère Eitoku", lat: -58.2, lon: 157.5, prio: 2, desc: "Cratère d'impact austral.", img: driveUrl("1gjR-_92WZv0rIUIxOe4Fh5k9YylJfIsB") },
+      { name: "Cratère Eminescu", lat: 10.8, lon: 245.8, pio: 1, prio: 1, desc: "Cratère jeune remarquable par ses creux brillants et ses pics centraux.", img: driveUrl("1HIBMVn9gjWlA3cHGTsYk9ZC_YIfG_5vR") },
+      { name: "Cratère Enwonwu", lat: 10.2, lon: 180.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1R83h4GxgCAlQluhN_VRDogN2cPybaDBC") },
+      { name: "Cratère Equiano", lat: -40.2, lon: 30.5, prio: 2, desc: "Cratère nommé en l'honneur d'Olaudah Equiano.", img: driveUrl("1GXjlapRQv8gIs2hgUmDgnhV8to7SO_gN") },
+      { name: "Cratère Faulkner", lat: 7.5, lon: 284.2, prio: 2, desc: "Cratère nommé d'après William Faulkner.", img: driveUrl("1jTBK1oSDRUXSwO1gOHpS8hpSE86kG6Lh") },
+      { name: "Cratère Fet", lat: -50.2, lon: 198.5, prio: 2, desc: "Cratère nommé d'après Afanasi Fet.", img: driveUrl("1tddLXa5q8hLT8rfULfata9l-z62X5EB7") },
+      { name: "Cratère Firdousi", lat: 21.5, lon: 264.5, prio: 2, desc: "Cratère nommé d'après le poète Ferdowsi.", img: driveUrl("1-33BTD4_J9SmN5Oo8okBbJuRmM1jL98S") },
+      { name: "Cratère Flaiano", lat: -21.8, lon: 74.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("12uRM7rNdAPH6CGTcuhgxDHVW2xScBgFv") },
+      { name: "Cratère Flaubert", lat: -13.2, lon: 72.5, prio: 2, desc: "Cratère nommé d'après Gustave Flaubert.", img: driveUrl("1o31b60howcj7pFYzbtJihM_3Xg43a25t") },
+      { name: "Cratère Futabatei", lat: 17.5, lon: 82.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1DTAAaZOvvntXoQpPpjoBGcMlcrCNm66F") },
+      { name: "Cratère Gainsborough", lat: -36.5, lon: 187.2, prio: 2, desc: "Cratère nommé d'après Thomas Gainsborough.", img: driveUrl("1citAq3MgW-RBLqQZD14dH0GNmbGhLs-p") },
+      { name: "Cratère Gauguin", lat: -66.5, lon: 96.5, prio: 2, desc: "Cratère nommé d'après Paul Gauguin.", img: driveUrl("1RYghqZVEDEE7Ox3SRJLvGz8roIFkd8C2") },
+      { name: "Cratère Geddes", lat: -27.8, lon: 29.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1EmQBHJCOoemcRJBVAurygKNPptHWS5-h") },
+      { name: "Cratère Ghiberti", lat: -48.2, lon: 79.5, prio: 2, desc: "Cratère nommé d'après Lorenzo Ghiberti.", img: driveUrl("11wqACR80wWcsg59DZcPKcRXPzqXjBq1m") },
+      { name: "Cratère Gibran", lat: 35.5, lon: 206.5, prio: 2, desc: "Cratère nommé d'après Khalil Gibran.", img: driveUrl("1le4LnC13SPizCVB1KkOaKq8ZjJBbHYx5") },
+      { name: "Cratère Giotto", lat: 12.2, lon: 54.2, prio: 2, desc: "Cratère nommé d'après Giotto di Bondone.", img: driveUrl("1uBeLr0Dvr0cV-nvjWINDa6P2W6VGbIQT") },
+      { name: "Cratère Glinka", lat: 14.5, lon: 111.5, prio: 2, desc: "Cratère nommé d'après Mikhaïl Glinka.", img: driveUrl("1GkWPTW2lw1ySRdfhPWOmzwOiQdOq62yY") },
+      { name: "Cratère Goethe", lat: 28.2, lon: 216.5, prio: 1, desc: "Grand bassin d'impact annulaire de 317 km.", img: driveUrl("1oD-nJe2q8dgP7ydAyPq8bAEaqK518gk4") },
+      { name: "Cratère Gogol", lat: -28.5, lon: 147.5, prio: 2, desc: "Cratère nommé d'après Nicolas Gogol.", img: driveUrl("1rR7DUA4XB7dmBE-swJow1dOOqxNCcvIy") },
+      { name: "Cratère Goya", lat: -4.5, lon: 152.2, prio: 2, desc: "Cratère nommé d'après Francisco de Goya.", img: driveUrl("12jShLsSQ57FY-tgJsQuFfB4BL7TmefSb") },
+      { name: "Cratère Grieg", lat: -48.5, lon: 247.5, prio: 2, desc: "Cratère nommé d'après Edvard Grieg.", img: driveUrl("1r5DDqeAsyc08qsW4DJsNtYkjUJflun2q") },
+      { name: "Cratère Guido d'Arezzo", lat: -38.2, lon: 191.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1txBGWvQZvjUMuldlp5bMUvCHKO2bPJ-n") },
+      { name: "Cratère Hals", lat: 53.5, lon: 302.5, prio: 2, desc: "Cratère nommé d'après Frans Hals.", img: driveUrl("1gxXhJcWupMq4z-xkrDEAeRC6KXKOkU7K") },
+      { name: "Cratère Han Kan", lat: 72.2, lon: 148.5, prio: 2, desc: "Cratère septentrional.", img: driveUrl("1oT2z_DHTNC5qi3ZZqBRYWmW493wq1my2") },
+      { name: "Cratère Handel", lat: 3.5, lon: 34.5, prio: 2, desc: "Cratère nommé d'après Georg Friedrich Haendel.", img: driveUrl("1smRvXNRjJAzYhqZFESbSUGWVz60H28QK") },
+      { name: "Cratère Harunobu", lat: 15.5, lon: 139.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1SYWBvsXeDsvTB_lZ7K9kxuzvhEdrpy_N") },
+      { name: "Cratère Hauptmann", lat: -23.2, lon: 145.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1izUqfuH9RHDgOBRJjN6R1ujE97AH9N7O") },
+      { name: "Cratère Hawthorne", lat: 51.5, lon: 115.5, prio: 2, desc: "Cratère nommé d'après Nathaniel Hawthorne.", img: driveUrl("1zAjTiCKKUSbBD6nbeuCdejmot3ES2igU") },
+      { name: "Cratère Haydn", lat: -27.5, lon: 71.5, prio: 2, desc: "Cratère nommé d'après Joseph Haydn.", img: driveUrl("1GSIS6vbpNWcgg4A1OvRonxYO80KmCeax") },
+      { name: "Cratère Heine", lat: 32.5, lon: 126.5, prio: 2, desc: "Cratère nommé d'après Heinrich Heine.", img: driveUrl("1hR-3btYb0180VzaTkHQg-N32dIGgMVZm") },
+      { name: "Cratère Hemingway", lat: 34.2, lon: 3.5, prio: 2, desc: "Cratère nommé d'après Ernest Hemingway.", img: driveUrl("1GeCkVTo0BUGdwgIZYSX3IIEOk0eXBF71") },
+      { name: "Cratère Hesiod", lat: -58.5, lon: 36.5, prio: 2, desc: "Cratère nommé d'après Hésiode.", img: driveUrl("1PCqGBFFzugb9LMPGtfxSe2DITI_nDpSB") },
+      { name: "Cratère Hiroshige", lat: -13.5, lon: 27.2, prio: 2, desc: "Cratère nommé d'après Utagawa Hiroshige.", img: driveUrl("1Y39dI8tZtgQvdBvNxr-Yteq45_smI9TQ") },
+      { name: "Cratère Hitomaro", lat: 16.5, lon: 312.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1BaL0jQXKbKP3TSzSA_EyyBFYZbBzwug0") },
+      { name: "Cratère Hodgkins", lat: -41.5, lon: 29.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1qkJL4IFhgIF1kG2BjlubHhxdfBrLUH_m") },
+      { name: "Cratère Hokusai", lat: 57.8, lon: 342.3, prio: 1, desc: "Cratère rayonnant spectaculaire aux rayons très étendus.", img: driveUrl("10JWdI797d3ghMEkERPwk8TV9TDem8tHp") },
+      { name: "Cratère Holbein", lat: 35.5, lon: 29.5, prio: 2, desc: "Cratère nommé d'après Hans Holbein.", img: driveUrl("14GyMo2DcJdePiCNcG3CUr44onznB7Izy") },
+      { name: "Cratère Holberg", lat: 67.8, lon: 60.5, prio: 2, desc: "Cratère nommé d'après Ludvig Holberg.", img: driveUrl("1w32QEBOIkW6mrz6RmP7pZL8a61OJ3D-0") },
+      { name: "Cratère Holst", lat: -15.5, lon: 54.5, prio: 2, desc: "Cratère nommé d'après Gustav Holst.", img: driveUrl("1VOvwz_3RKiFY--bGpuuSALAjDPiBbkHZ") },
+      { name: "Cratère Homer", lat: -1.2, lon: 37.5, prio: 2, desc: "Cratère nommé d'après Homère.", img: driveUrl("1EJYk5dtP59OHA-j6tv71wBsTVHqBy_vA") },
+      { name: "Cratère Horace", lat: -68.5, lon: 51.5, prio: 2, desc: "Cratère nommé d'après le poète Horace.", img: driveUrl("19WDeu4nRMRDPIA_3M--_EbMQigG4ULla") },
+      { name: "Cratère Hovnatanian", lat: -31.5, lon: 35.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("12H0P1E_l3E4G7sQUsX5dqO5JXNt4t130") },
+      { name: "Cratère Hun Kal", lat: -0.5, lon: 20.0, prio: 1, desc: "Cratère de référence pour le méridien 20 de Mercure.", img: driveUrl("1e9AeyeB9yTVXwHkF_mLX-C3-P1kOGPWE") },
+      { name: "Cratère Ibsen", lat: -24.2, lon: 35.5, prio: 2, desc: "Cratère nommé d'après Henrik Ibsen.", img: driveUrl("1YECqOrBjU2NmtvSWlwp4KXX2qChlYh9P") },
+      { name: "Cratère Ictinus", lat: -79.2, lon: 65.5, prio: 2, desc: "Cratère d'impact austral.", img: driveUrl("1509eQCvWi8ttxl_JktjzyHLRuZh2rmHe") },
+      { name: "Cratère Imhotep", lat: -18.2, lon: 37.5, prio: 2, desc: "Cratère nommé d'après Imhotep.", img: driveUrl("1LzjXKtrvKdDKmv8Kk3rwuggORGeWkcgV") },
+      { name: "Cratère Izquierdo", lat: -1.2, lon: 105.5, prio: 2, desc: "Cratère nommé d'après María Izquierdo.", img: driveUrl("1luom2_1QtpUbVhunfbQfS4PPNPc4tHhM") },
+      { name: "Cratère Janáček", lat: -56.5, lon: 155.5, prio: 2, desc: "Cratère nommé d'après le compositeur Leoš Janáček.", img: driveUrl("1bQrvyJeIUmErbhEDiIe9jERPGqXILDc5") },
+      { name: "Cratère Jókai", lat: 71.5, lon: 129.5, prio: 2, desc: "Cratère nommé d'après l'écrivain Mór Jókai.", img: driveUrl("1KV5HFzPiP8opqbUo42_EHfFoonpkQVxg") },
+      { name: "Cratère Judah Ha-Levi", lat: 11.5, lon: 109.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1xiFFk-6i6e_HoC2CeU2AcnSjLYH3mmAi") },
+      { name: "Cratère Kālidāsā", lat: 17.5, lon: 181.5, prio: 2, desc: "Cratère nommé d'après le poète Kālidāsā.", img: driveUrl("1X9lmzyedQqzXENt4rrH5l6PtyMduWMdL") },
+      { name: "Cratère Karsh", lat: -34.5, lon: 79.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1RqU412yFCJOtzrnHnjOyF9xxyGzWNeB9") },
+      { name: "Cratère Keats", lat: -69.2, lon: 153.5, prio: 2, desc: "Cratère nommé d'après John Keats.", img: driveUrl("1YQ-HhUj4SE1lT0tpBgvuz0aP9IHC51yU") },
+      { name: "Cratère Kenkō", lat: -3.5, lon: 64.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1AEQNo7crMKycdIfe8ByRNTWJm9xosvnk") },
+      { name: "Cratère Kertész", lat: -27.2, lon: 148.5, prio: 2, desc: "Cratère nommé d'après le photographe André Kertész.", img: driveUrl("1GHCiVY38t1fX_w7KTw8A-CQSBoZ2FkrB") },
+      { name: "Cratère Khansa", lat: 60.5, lon: 301.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("17OE1Agwh7s4xteggBqMHBKarGUsSQVC0") },
+      { name: "Cratère Kipling", lat: 24.5, lon: 70.5, prio: 2, desc: "Cratère nommé d'après Rudyard Kipling.", img: driveUrl("1WhItThqGpSq64KPu92YIrT2ta6EQDsEQ") },
+      { name: "Cratère Kōshō", lat: -39.5, lon: 201.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1wOHVXuqFCRAseZKwxL8qpuavJgKiyO5t") },
+      { name: "Cratère Kuan Han-Chʽing", lat: 29.5, lon: 56.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("176C9NOFo7OEGJBiM_Nb0MfXMgjDvQCQ8") },
+      { name: "Cratère Kuiper", lat: -11.3, lon: 31.1, prio: 1, desc: "Cratère d'impact très sombre aux éjectas contrastés.", img: driveUrl("1p2I4U0pvKVBCF_07vWFjpdLnBodCSe4G") },
+      { name: "Cratère Kulthum", lat: -58.5, lon: 242.5, prio: 2, desc: "Cratère nommé en l'honneur d'Oum Kalthoum.", img: driveUrl("1OpPWWljydmfkgvOn_HqFhU12rOCcm1GD") },
+      { name: "Cratère Kunisada", lat: -2.5, lon: 133.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Fk_8FOqT9u9L6fWMYkV3QawN9egg5Nu_") },
+      { name: "Cratère Lange", lat: 15.5, lon: 65.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1n964-gbJeg26BzdN7Am3yNAWG9D4Jx7m") },
+      { name: "Cratère Larrocha", lat: 48.5, lon: 71.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("13kr5fa2L5j9xYQ0T7dl1gTuH9JE8aWR-") },
+      { name: "Cratère Leopardi", lat: -72.2, lon: 280.5, prio: 2, desc: "Cratère nommé d'après Giacomo Leopardi.", img: driveUrl("1yYcse05JL4EVdLtRaQgbpTi1xfiB8gfm") },
+      { name: "Cratère Lermontov", lat: 15.5, lon: 311.5, prio: 2, desc: "Cratère abritant des hollows prononcés.", img: driveUrl("1yycPjiVo8dtY2D9806ngdCnOtSNp5VLg") },
+      { name: "Cratère Lessing", lat: -28.5, lon: 90.5, prio: 2, desc: "Cratère nommé d'après Gotthold Ephraim Lessing.", img: driveUrl("1_MJFnsEVB_gsJKEnszZ_EhxzB9CIL9Y8") },
+      { name: "Cratère Li Chʽing-Chao", lat: 75.5, lon: 35.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1sm8KP_KcDn5FPRuErH3XsMXQbCYByd3l") },
+      { name: "Cratère Li Po", lat: 18.5, lon: 36.5, prio: 2, desc: "Cratère nommé d'après le poète Li Bai.", img: driveUrl("18lsaXH43GuZ9Q_a4L4ahGymUWKBK7-XE") },
+      { name: "Cratère Liang Kʽai", lat: -48.5, lon: 181.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1KMLqAdHwzZcdwAjJHEykyVfoLM0Hp9yi") },
+      { name: "Cratère Liszt", lat: 21.5, lon: 355.5, prio: 2, desc: "Cratère nommé d'après Franz Liszt.", img: driveUrl("13NwUQ55QbJytBWejONGAJ1PRzhMhnp9-") },
+      { name: "Cratère Lu Hsun", lat: -1.5, lon: 23.5, prio: 2, desc: "Cratère nommé d'après Lu Xun.", img: driveUrl("1npj0lgOaT3k4daCv8XXPUZ1NOVtT5RXe") },
+      { name: "Cratère Lysippus", lat: 3.5, lon: 122.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1hOk1ePm6AGuw7MTpJPrjCWNB83PmlVgh") },
+      { name: "Cratère Ma Chih-Yuan", lat: -77.5, lon: 301.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("12_A_qqosmsIVxKlN10VhQ6sBXMm8YsSt") },
+      { name: "Cratère Machaut", lat: -1.5, lon: 86.5, prio: 2, desc: "Cratère nommé d'après Guillaume de Machaut.", img: driveUrl("1GGDVpY7wHA0Ull-YSG6DK9KimFnIW0GR") },
+      { name: "Cratère Mahler", lat: -19.5, lon: 19.5, prio: 2, desc: "Cratère nommé d'après Gustav Mahler.", img: driveUrl("11RQPh6vasQv0B-EPn8vdTHH--3Me9H-j") },
+      { name: "Cratère Mansart", lat: 77.5, lon: 119.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Ic3gX5ygdiXByd7-HpU71XlpKs8Hz14m") },
+      { name: "Cratère Mansur", lat: 46.5, lon: 161.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1aqI2gJqHiIER8WOCIeRaqYa9NsBsQgOr") },
+      { name: "Cratère March", lat: 31.5, lon: 176.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1tvA8tmMVqctADLGFX6Av087CAyosEt_E") },
+      { name: "Cratère Mark Twain", lat: 9.5, lon: 139.5, prio: 2, desc: "Cratère nommé d'après Mark Twain.", img: driveUrl("1Tr6f2BtH694J1y5CrOSfKJ1rBSjmON6n") },
+      { name: "Cratère Martí", lat: -74.5, lon: 165.5, prio: 2, desc: "Cratère nommé d'après José Martí.", img: driveUrl("1JmeY3qq1ZbiZkPabjx6nRP2pdx82xMHk") },
+      { name: "Cratère Martial", lat: 70.5, lon: 179.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1hxo1YTVTETSBZl8WZS7THhvaMudX_Di9") },
+      { name: "Cratère Matabei", lat: -22.5, lon: 247.5, prio: 2, desc: "Cratère d'impact aux creux brillants.", img: driveUrl("1qltGC0ZXr-krrKoodI8jZNFm_YyNq22v") },
+      { name: "Cratère Matisse", lat: -23.5, lon: 91.5, prio: 2, desc: "Cratère nommé d'après Henri Matisse.", img: driveUrl("1j8RksLPwscJ1ToZN3wB8YT4pG_qA2g8n") },
+      { name: "Cratère Mena", lat: 0.5, lon: 125.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1pkHoCUyrrtwbHDQXg9lWhvmGtsFGgxlH") },
+      { name: "Cratère Michelangelo", lat: -45.2, lon: 109.2, prio: 1, desc: "Grand bassin d'impact de 226 km.", img: driveUrl("1yc1rOKuanGKjV9UDsbOJ2co47zno_yhk") },
+      { name: "Cratère Mickiewicz", lat: 23.5, lon: 102.5, prio: 2, desc: "Cratère nommé d'après Adam Mickiewicz.", img: driveUrl("1XLJPO7p-z9BYTHY5siore_MRKsPYqBie") },
+      { name: "Cratère Milton", lat: -24.5, lon: 174.5, prio: 2, desc: "Cratère nommé d'après John Milton.", img: driveUrl("1uef5xnvkkmDvnUmlYiIM9g14Xm5o_syM") },
+      { name: "Cratère Mofolo", lat: -36.5, lon: 284.5, prio: 2, desc: "Cratère nommé d'après Thomas Mofolo.", img: driveUrl("1atTvlPibpJ_X1iArEPTLs2is0BdHi0xl") },
+      { name: "Cratère Molière", lat: 15.5, lon: 167.5, prio: 2, desc: "Cratère nommé d'après Molière.", img: driveUrl("1zdUI0C5QQ4WztPXglq6j8KllByr21rsf") },
+      { name: "Cratère Monet", lat: 44.5, lon: 9.5, prio: 2, desc: "Cratère nommé d'après Claude Monet.", img: driveUrl("1Zz2I3J4lBc5K9YGm1TQEA-RgReHh8iAB") },
+      { name: "Cratère Monteverdi", lat: 64.5, lon: 77.5, prio: 2, desc: "Cratère nommé d'après Claudio Monteverdi.", img: driveUrl("1CQHMXHGXDqPdwS1oZIGPp8stevP3dqeq") },
+      { name: "Cratère Moody", lat: -13.5, lon: 54.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1ZzuHEuff7Eb27C89Jl8jMNSgFwIuuAml") },
+      { name: "Cratère Mozart", lat: 8.0, lon: 190.5, prio: 1, desc: "Cratère d'impact majeur aux terrasses complexes.", img: driveUrl("17UAt0r6KxVW8SVtPOAVLGESzizwq-UVO") },
+      { name: "Cratère Munch", lat: 40.5, lon: 141.5, prio: 2, desc: "Cratère nommé d'après Edvard Munch.", img: driveUrl("1xYnUl7uBSAy8Kd6hEYXUbHy9aSBajarx") },
+      { name: "Cratère Munkácsy", lat: 22.5, lon: 104.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1vUezL-IQSndBiP2VFlh1H-lgqspMYIxp") },
+      { name: "Cratère Murasaki", lat: -12.5, lon: 31.5, prio: 2, desc: "Cratère nommé d'après Murasaki Shikibu.", img: driveUrl("1RK0JnRr8l-nxkZEQc1RnnreYRFlVPUdn") },
+      { name: "Cratère Mussorgskij", lat: 33.5, lon: 97.5, prio: 2, desc: "Cratère nommé d'après Modeste Moussorgski.", img: driveUrl("1h26k2zhbsnVRLl_EYneq2TogT_-RmN6T") },
+      { name: "Cratère Myron", lat: 75.5, lon: 78.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1CaR9eS_aBjqeW2JKK4f-siVfdOm5rNKG") },
+      { name: "Cratère Nabokov", lat: 14.5, lon: 156.5, prio: 2, desc: "Cratère nommé d'après Vladimir Nabokov.", img: driveUrl("1I0zERb4TeMyZXeeDYdl36uIyak8ZY8B4") },
+      { name: "Cratère Nampeyo", lat: -39.5, lon: 51.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1ExSRBRdObugXDi5pKHUTm8txx9ldewlI") },
+      { name: "Cratère Navoi", lat: 59.5, lon: 204.5, prio: 2, desc: "Cratère nommé d'après Alisher Navoi.", img: driveUrl("15_SQkBK0MQFtrEWKS_EZxTcPTVk2IHJy") },
+      { name: "Cratère Nāwahī", lat: 2.5, lon: 47.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Oh599EOX4LvV6Pt1Icc10CYH_1zRFkL7") },
+      { name: "Cratère Neruda", lat: -51.5, lon: 25.5, prio: 2, desc: "Cratère nommé d'après Pablo Neruda.", img: driveUrl("1yejOekrSFTJiqU2SZjFPh3XD8w8WnnW3") },
+      { name: "Cratère Neumann", lat: -37.5, lon: 332.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1EVAc5aqcrEuOGlnei6_w2m87BQcLKS56") },
+      { name: "Cratère Nizāmī", lat: 71.5, lon: 25.5, prio: 2, desc: "Cratère nommé d'après Nizami Ganjavi.", img: driveUrl("19-IGRNoqrR3M8K-3qaFy1j_QEY563iO9") },
+      { name: "Cratère Ōkyo", lat: -61.5, lon: 73.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1iyoRLcJGGYfAQ7pbvoMyUuOBDcMBEHFW") },
+      { name: "Cratère Oskison", lat: 61.5, lon: 50.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("14oDqLGMBEa-mEJqlvW5k4xSynWNHwWKP") },
+      { name: "Cratère Petrarch", lat: -30.5, lon: 26.5, prio: 2, desc: "Cratère nommé d'après Pétrarque.", img: driveUrl("18cOfv_XwK8l36vzZWTf_PtAjU3gp6Dn2") },
+      { name: "Cratère Picasso", lat: -3.5, lon: 104.5, prio: 2, desc: "Cratère nommé d'après Pablo Picasso.", img: driveUrl("1f0geGj-sqHEiK9Y07SsH0OBWcKbhwgwq") },
+      { name: "Cratère Poe", lat: 44.5, lon: 201.5, prio: 2, desc: "Cratère nommé d'après Edgar Allan Poe.", img: driveUrl("1maPPLPPv1bMJlWpXBKhIZZxB_83CT2m-") },
+      { name: "Cratère Polygnotus", lat: 0.5, lon: 68.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1VipSlFPazbKtXb2RdHoFE-nNMFUx-6Hh") },
+      { name: "Cratère Praxiteles", lat: 27.5, lon: 60.5, prio: 2, desc: "Cratère nommé d'après Praxitèle.", img: driveUrl("1W0Q9NnQJFArwikXUOAD_jhIU8lBIEYQd") },
+      { name: "Cratère Prokofiev", lat: 84.5, lon: 63.5, prio: 1, desc: "Cratère polaire nord abritant des réserves de glace.", img: driveUrl("11g-cv-DFaOVfS3DeWbQL7WaDXbqjVX5V") },
+      { name: "Cratère Qi Baishi", lat: 4.5, lon: 213.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1wYkO15WPoS7o2XJF41zSuRhuZxm0wCKV") },
+      { name: "Cratère Rachmaninoff", lat: 27.5, lon: 57.5, prio: 1, desc: "Bassin d'impact exceptionnel aux anneaux multiples.", img: driveUrl("1XSNaZtarFumVn8DHv6Mj5YlSGQwCDKq8") },
+      { name: "Cratère Raden Saleh", lat: 1.5, lon: 212.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("11r1Vse_51uOg41-49x9cqSIaRRxyTLCQ") },
+      { name: "Cratère Raditladi", lat: 26.5, lon: 241.5, prio: 1, desc: "Grand bassin géologiquement très jeune avec des creux.", img: driveUrl("1b1vTjdEcFaBMLMA7Fn5HPbAm8mbRVK9N") },
+      { name: "Cratère Rameau", lat: -56.5, lon: 37.5, prio: 2, desc: "Cratère nommé d'après Jean-Philippe Rameau.", img: driveUrl("1sTL_wsY1OsJS1Omx-oShcEK6b4VGFDR9") },
+      { name: "Cratère Raphael", lat: -19.5, lon: 76.5, prio: 2, desc: "Cratère nommé d'après Raphaël.", img: driveUrl("1XCx5AkUsa8-4zPv4p_jerxdyrl2jTssL") },
+      { name: "Cratère Rembrandt", lat: -33.2, lon: 88.2, prio: 1, desc: "Spectaculaire bassin d'impact de 716 km.", img: driveUrl("153cgn_6dUUDCqGycFYBvtRtb55Hd0_9K") },
+      { name: "Cratère Renoir", lat: -18.5, lon: 51.5, prio: 1, desc: "Bassin d'impact de 220 km aux sols inondés de plaines lisses.", img: driveUrl("1RENKTgmPegn3BKV9gks0b3eMfeVqFfBb") },
+      { name: "Cratère Rivera", lat: -66.5, lon: 108.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1j6Yz8mSd2fFs0EaJrwQEa7u61V_Nlk3l") },
+      { name: "Cratère Rodin", lat: 22.5, lon: 18.5, prio: 2, desc: "Cratère nommé d'après Auguste Rodin.", img: driveUrl("1wLmM2bg1zubdoKsDs2WdDF2y2jpVgRj7") },
+      { name: "Cratère Rūdaki", lat: -3.5, lon: 51.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1nIcnU-xyGLA6WXZDPHAgU1gqYwaPdZxw") },
+      { name: "Cratère Sander", lat: 41.5, lon: 204.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1zHZJ8q3pTYaPO3y_t-VC3oYRkvasG66l") },
+      { name: "Cratère Schubert", lat: -43.5, lon: 55.5, prio: 2, desc: "Cratère nommé d'après Franz Schubert.", img: driveUrl("1FxhNrOAseRzFfumzHJGno6QlgwnBVgKV") },
+      { name: "Cratère Shakespeare", lat: 49.5, lon: 151.5, prio: 1, desc: "Cratère d'impact majeur de 370 km.", img: driveUrl("1NImvyV7sPb75bSNxSA7Kh-bDoKOoI2oC") },
+      { name: "Cratère Sinan", lat: 15.5, lon: 29.5, prio: 2, desc: "Cratère nommé d'après Mimar Sinan.", img: driveUrl("1MCnfSC4RwSzMb514Mm9A6aV3Ti4SFNqx") },
+      { name: "Cratère Stravinsky", lat: 51.5, lon: 73.5, prio: 2, desc: "Cratère nommé d'après Igor Stravinsky.", img: driveUrl("12VInGkbyJBRXYXzaArtO_jH0ubH0JR78") },
+      { name: "Cratère Sullivan", lat: -16.5, lon: 326.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1qTe5CfVMJ_dHp-2Ghnz-_RdDCit24tjo") },
+      { name: "Cratère Sveinsdóttir", lat: -2.5, lon: 260.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Ax-12t6746Wsj5dINZ8HuREaQDFpGf3b") },
+      { name: "Cratère Titian", lat: -4.5, lon: 241.5, prio: 2, desc: "Cratère nommé d'après le Titien.", img: driveUrl("1UTtKV5JA0uHfN9Em0HdB4DxukJHbP_MF") },
+      { name: "Cratère To Ngoc Van", lat: 15.5, lon: 300.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1O5H6VJxLcTk_bK-ZwCwKFZywo_NF4KyS") },
+      { name: "Cratère Velázquez", lat: 37.5, lon: 52.5, prio: 2, desc: "Cratère nommé d'après Diego Velázquez.", img: driveUrl("1DTHRFlZlDrZ4wXOsADsNkticzE7NauxU") },
+      { name: "Cratère Verdi", lat: 64.5, lon: 168.5, prio: 1, desc: "Grand bassin d'impact de 155 km.", img: driveUrl("11JCqFOyZ56UbT-yTiA5DQZw15vBsT5xo") },
+      { name: "Cratère Villa-Lobos", lat: -5.5, lon: 99.5, prio: 2, desc: "Cratère nommé d'après Heitor Villa-Lobos.", img: driveUrl("1RMDMgYEbu75uoCuPzqPkEBiyTr5RLxd2") },
+      { name: "Cratère Vivaldi", lat: 13.5, lon: 86.5, prio: 2, desc: "Cratère nommé d'après Antonio Vivaldi.", img: driveUrl("1iSlI0tfxhUhl3tPP-ddyfOcLyvWwODZY") },
+      { name: "Cratère Xiao Zhao", lat: 10.5, lon: 239.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Urx8skvkidVvFybZA62PGXRJS0PrWgv8") },
+      { name: "Cratère Yeats", lat: -9.5, lon: 34.5, prio: 2, desc: "Cratère nommé d'après William Butler Yeats.", img: driveUrl("1PAFhG6F6u55X9uL557HXLYF79Y6KJikp") },
+      { name: "Cratère Zola", lat: 50.5, lon: 177.5, prio: 2, desc: "Cratère nommé d'après Émile Zola.", img: driveUrl("1Ki0dHtEvaEieDHljtwdHUwp84PvMZK-i") },
+      { name: "Cratère Van Eyck", lat: -43.2, lon: 159.2, prio: 2, desc: "Cratère nommé d'après Jan van Eyck.", img: driveUrl("1vO1cw0nNMQzsbls3KSSWeyQyPuEMTt5D") },
+      { name: "Planitia Aparangi", lat: 14.5, lon: 278.5, prio: 2, desc: "Plaine volcanique de Mercure.", img: driveUrl("1sS5igThyAAz9EPnWTzaaY38WNPku10-F") },
+      { name: "Planitia Borealis", lat: 75.5, lon: 300.5, prio: 1, desc: "Vaste plaine lisses du pôle nord.", img: driveUrl("1T-lnoD8RAxnn8LeCWERyHM5yUOOFVEcs") },
+      { name: "Planitia Budh", lat: 21.5, lon: 148.5, prio: 2, desc: "Plaine lisse.", img: driveUrl("1IX2agseu3hQ9DGKsl7fwMh1vUVEpolF6") },
+      { name: "Planitia Caloris", lat: 30.5, lon: 187.0, prio: 1, desc: "Le plus grand bassin d'impact thermique de Mercure (1 550 km).", img: driveUrl("1nAd8sNzmYnTdDTPOennJdjmNGm_XTNrh") },
+      { name: "Planitia Odin", lat: 24.5, lon: 170.5, prio: 2, desc: "Plaine géologique.", img: driveUrl("1Ulx-_pij82U-GTiaPnk67z98vGvEZz1w") },
+      { name: "Planitia Sobkou", lat: 38.5, lon: 129.5, prio: 2, desc: "Plaine volcanique.", img: driveUrl("1FwtLvjC6esHLJBr43kAeyHkBQT4Fn4Dr") },
+      { name: "Planitia Tir", lat: -5.5, lon: 13.5, prio: 2, desc: "Plaine lisse de Mercure.", img: driveUrl("18cQ57V-Z67rWMbEwM12WNeDGzMSLttVf") },
+      { name: "Planitia Utaridi", lat: -25.5, lon: 39.5, prio: 2, desc: "Plaine de type planitia.", img: driveUrl("1k3JFtuNCC7h5mdqn5rxsJuli-XL2fdMJ") },
+      { name: "Rupes Discovery", lat: -56.3, lon: 38.3, prio: 1, desc: "Escarpement de faille géant témoignant de la contraction de la planète.", img: driveUrl("1oFAKcbPs1pvnhLmEn_t15svzAtFwVyF8") }
     ].map(d => ({
-      name: d.name, type: d.type || "Cratère d'impact", cat: "crater", css: "poi-crater", lat: d.lat, lon: d.lon,
+      name: d.name, type: "Structure géologique", cat: d.name.includes("Planitia") ? "valley" : (d.name.includes("Rupes") ? "tecto" : "crater"), css: d.name.includes("Planitia") ? "poi-valley" : "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio, desc: d.desc, img: d.img,
+      metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
+    }));
+  }
+
+  // Liste complète des POI de Vénus
+  function getVenusPOIs() {
+    return [
+      { name: "Carmenta Farra (pancake)", lat: 3.5, lon: 6.5, prio: 1, type: "Volcan bouclier plat", cat: "volcano", css: "poi-volcano", desc: "Dôme volcanique aplati en forme de crêpe (« pancake ») formé par la lave visqueuse de Vénus.", img: driveUrl("1e3ifS06oYP1fFPQkjyoWlQ5pgbviQIRk") },
+      { name: "Chasma Devana", lat: -2.5, lon: 290.5, prio: 1, type: "Rift géant", cat: "valley", css: "poi-valley", desc: "Immense canyon de rift tectonique.", img: driveUrl("1rhIO02PyLh9um-Kr7064Ot4E25Eyvrft") },
+      { name: "Corona Artemis", lat: -35.0, lon: 135.0, prio: 1, type: "Corona volcanique", cat: "corona", css: "poi-corona", desc: "Structure circulaire géante (corona) liée à la remontée de panaches mantelliques.", img: driveUrl("1ngovxxnw-K_p5nBzwu1Cee89lRyPBm61") },
+      { name: "Corona Baʽhet", lat: -32.5, lon: 338.5, prio: 2, desc: "Corona volcanique.", img: driveUrl("1NJz_X-O16P6u-Tg-k0IrkBsTNzjUUDRS") },
+      { name: "Corona Fotla", lat: -15.5, lon: 202.5, prio: 2, desc: "Corona vénusienne.", img: driveUrl("190vGzGhgHuL1AgDdDSNnYij6AFS7wyTy") },
+      { name: "Corona Quetzalpetlatl", lat: -68.5, lon: 356.5, prio: 1, type: "Corona géante", cat: "corona", css: "poi-corona", desc: "L'une des plus vastes coronae de Vénus.", img: driveUrl("1bu87vhQM6ltyKzknempRs8s3XHY_61sb") },
+      { name: "Cratère Addams", lat: -56.2, lon: 98.9, prio: 2, desc: "Cratère d'impact vénusien.", img: driveUrl("1kZeonIWSMWrzzD-ZdJq3ohp42zEwQ_k1") },
+      { name: "Cratère Adivar", lat: 8.9, lon: 323.8, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1fbk6LGjCvZJqj0UmofV4-mJvvOF0NEb8") },
+      { name: "Cratère Alcott", lat: 59.8, lon: 36.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1Y1EDsWIvkClkME0y9zDat35L17nA-MVz") },
+      { name: "Cratère Ariadne", lat: 43.8, lon: 355.3, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1LKpDEtR9sMmvKO7yokrlLhc_WWof1leY") },
+      { name: "Cratère Aurelia", lat: 21.0, lon: 331.8, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1gWk-5lwJsD9RElDYzXbCKmIv20xcpthx") },
+      { name: "Cratère Balch", lat: 30.0, lon: 282.9, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1XlIIY_KG9Amnwu2fq3WxAmJnxdx4bc3Z") },
+      { name: "Cratère Barton", lat: 27.4, lon: 33.7, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1AG8cKZjSlIl86EhHCN2UR2h1P2fFdoPj") },
+      { name: "Cratère Buck", lat: -20.6, lon: 354.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1TVjp_qrMkMs-PrXq_vmHKOLDhZUazwYv") },
+      { name: "Cratère Cleopatra", lat: 65.9, lon: 7.1, prio: 1, type: "Cratère volcanique/impact", cat: "crater", css: "poi-crater", desc: "Immense cratère recoupant les montagnes de Maxwell Montes.", img: driveUrl("1PlltfOqgmrZRe4OBxgiAHf7k8Dsd4CRz") },
+      { name: "Cratère Danilova", lat: -26.3, lon: 337.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1_DgFV_RcxzuyJJDKuazsFfBHYBDUndgP") },
+      { name: "Cratère De Lalande", lat: 23.3, lon: 265.1, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1EMfUiZTFJmaGBUBokY0h73KkXDCAPqwC") },
+      { name: "Cratère Dickinson", lat: -74.6, lon: 177.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1ShuB8nLRzYBJxWMwO5jRjoFtcHdUlurp") },
+      { name: "Cratère Goeppert-Mayer", lat: -60.8, lon: 23.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1SWXZh6xj4jkY-itqlkOQBEM4xesb49oH") },
+      { name: "Cratère Golubkina", lat: 60.3, lon: 285.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1cFtkZ1eNhrexgrmanYOunGWVmw9GqvDr") },
+      { name: "Cratère Grimke", lat: 14.5, lon: 212.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("12rt8iged3jANXYSucEjiW4v3kttaJ0ff") },
+      { name: "Cratère Isabella", lat: -29.8, lon: 204.1, prio: 1, desc: "Cratère entouré de spectaculaires éjectas lisses.", img: driveUrl("1Q3Lv0ILLceO_dPdWczr7lBVXh_Gmg-f0") },
+      { name: "Cratère Jeanne", lat: 40.0, lon: 310.6, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1L9eu3v3chhUbz6ohJOf9DwhyLTmnqIkz") },
+      { name: "Cratère Maria Celeste", lat: -24.2, lon: 147.9, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1HvsDJ36XTQCvaQ7U9K16Dhug-iFnsKHr") },
+      { name: "Cratère Mead", lat: 12.5, lon: 57.2, prio: 1, desc: "Le plus grand cratère d'impact de Vénus (270 km de diamètre).", img: driveUrl("1DlXowPw_N7ku5H84iov3_rBvKeDr1zX2") },
+      { name: "Cratère Meitner", lat: -55.6, lon: 321.6, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1IkjakN_Y0GXH0NnhbnMuVwO0jLJxiBJ1") },
+      { name: "Cratère Mona Lisa", lat: 25.6, lon: 25.1, prio: 2, desc: "Cratère d'impact.", img: driveUrl("13KkxqoMFJvjZjzWN3IvLb6QwKn1-SLfh") },
+      { name: "Cratère Stefania", lat: -51.5, lon: 334.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1M6Y1_i6jmj0PWJa1ggUXX0ADuXB5FZP9") },
+      { name: "Cratère Wanda", lat: 50.2, lon: 275.5, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1U1ITrLOXCGi40BFpOjfuCXQmnHaf7s9i") },
+      { name: "Cratère Wheatley", lat: -13.5, lon: 266.8, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1UTNHJ6eE94U1V3mJRn9zscyOwxBCXC6c") },
+      { name: "Cratère Yablochkina", lat: 48.0, lon: 195.3, prio: 2, desc: "Cratère d'impact.", img: driveUrl("11QfnfTZp2zAXAbD3LOQB69ACezNPyQ8v") },
+      { name: "Mons Abeona", lat: -20.5, lon: 271.5, prio: 2, desc: "Volcan vénusien.", img: driveUrl("1IKh_Of7z3aG4eTgcaTfXHrV5YUGNUFnq") },
+      { name: "Mons Irnini", lat: -14.6, lon: 17.5, prio: 2, desc: "Volcan vénusien.", img: driveUrl("1WsMpcC4aBysN0Q1AX1wPI37IsqnAaewq") },
+      { name: "Mons Ozza", lat: 9.1, lon: 201.7, prio: 2, desc: "Volcan vénusien.", img: driveUrl("147zcQz9sjkTJO2g8HuRc3maDa9csRKIJ") },
+      { name: "Mons Sapas", lat: -8.5, lon: 188.4, prio: 2, desc: "Volcan bouclier majeur de Vénus.", img: driveUrl("1vmEZ4E8vnQajMF_Scu6BjGLLWW9sjqcE") },
+      { name: "Mons Ushas", lat: -24.4, lon: 324.6, prio: 2, desc: "Volcan vénusien.", img: driveUrl("1YJRzJyzbm5E1WDqVxIZWEwO22vEU5ylQ") },
+      { name: "Montes Akna", lat: 68.9, lon: 317.0, prio: 2, desc: "Chaîne de montagnes vénusienne.", img: driveUrl("1WTWyaStzkyLuV1S60wX6cJvlA9nyyqD3") },
+      { name: "Montes Maxwell", lat: 65.2, lon: 3.3, prio: 1, type: "Chaîne de montagnes", cat: "volcano", css: "poi-volcano", desc: "La plus haute chaîne de montagnes de Vénus (culminant à près de 11 km).", img: driveUrl("1RNxFXrmlvpPlNz7E4JQYldQl_hF0RT8u") },
+      { name: "Patera Sacajawea", lat: 64.5, lon: 337.5, prio: 2, desc: "Caldeira volcanique majeure.", img: driveUrl("1hcXS-owW0xxFjHaUt6pQ5-1f0K43_JMj") },
+      { name: "Patera Sachs", lat: -23.5, lon: 334.5, prio: 2, desc: "Caldeira volcanique.", img: driveUrl("1koBoT0RBN2O6ERgY6RZs3njdEuthxjwZ") },
+      { name: "Tique (dôme volcanique)", lat: -9.5, lon: 30.5, prio: 2, desc: "Dôme volcanique escarpé.", img: driveUrl("1BQzaAwjmZkbJF0Jngp10xig2E2XjngEN") },
+      { name: "Vallis Baltis", lat: 36.8, lon: 165.0, prio: 1, type: "Chenal de lide", cat: "valley", css: "poi-valley", desc: "L'un des plus longs canaux de lave de tout le système solaire (plus de 6 800 km).", img: driveUrl("1sOECpbgJX_UlnrqLmd_jOyRRwiqNg52x") },
+      { name: "Vallis Bayara", lat: -53.5, lon: 3.5, prio: 2, desc: "Vallée de lave vénusienne.", img: driveUrl("1Eq6L0EIEYT4mDLcHGIzN725GcLzYwwik") }
+    ].map(d => ({
+      name: d.name, type: d.type || "Relief vénusien", cat: d.cat || "crater", css: d.css || "poi-crater", lat: d.lat, lon: d.lon,
       priority: d.prio || 1, desc: d.desc, img: d.img,
       metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
     }));
   }
 
-  function getMarsPOIs() {
-    return [
-      { name: "Mons Olympus", lat: 18.65, lon: 226.2, prio: 1, type: "Volcan bouclier géant", cat: "volcano", css: "poi-volcano", desc: "Le plus haut volcan du système solaire (~22 km d'altitude, 600 km de diamètre). Sa structure massive s'élève bien au-dessus de la fine atmosphère martienne.", metrics: [{ label: "Altitude", val: "21,9 km" }, { label: "Diamètre", val: "600 km" }] }
-    ];
-  }
-
+  // Liste complète des POI de la Lune
   function getMoonPOIs() {
     return [
-      { name: "Cratère Copernic", lat: 9.6, lon: 339.9, prio: 1, type: "Cratère à rayons majeurs", desc: "Archétype du cratère d'impact lunaire (93 km), ceinturé d'un immense réseau d'éjectas clairs rayonnant sur des centaines de kilomètres à la surface de la Lune." }
+      { name: "Cratère Abbe", lat: -57.4, lon: 174.5, prio: 2, desc: "Cratère d'impact lunaire de la face cachée.", img: driveUrl("1Fp_eIcqeiGq02Hw8WV45eX6_HGZasNsx") },
+      { name: "Cratère Abulfeda", lat: -13.8, lon: 13.9, prio: 2, desc: "Cratère d'impact marquant le haut plateau.", img: driveUrl("1K4-2qMZNFitS4VypZiT2rtLtlU6YgoWT") },
+      { name: "Cratère Acosta", lat: -5.4, lon: 60.3, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1bxj1g0zd92SRS3cJfPey-FxPnPrSvC5t") },
+      { name: "Cratère Adams", lat: -31.7, lon: 68.4, prio: 2, desc: "Cratère d'impact.", img: driveUrl("19YWdQQCPhdNCWRq6GBh5cie6itN7eRf5") },
+      { name: "Cratère Agatharchides", lat: -19.9, lon: -31.1, prio: 2, desc: "Cratère d'impact en bordure de mer.", img: driveUrl("1ZsRWW_ewLwJzqYy2Jb71R-cZV__IALUW") },
+      { name: "Cratère Agrippa", lat: 4.1, lon: 10.5, prio: 2, desc: "Cratère d'impact aux parois terrassées.", img: driveUrl("1r5vv_owY8kf9I2Q2JF-48ZBEG2AipaWf") },
+      { name: "Cratère Aitken", lat: -16.4, lon: 173.4, prio: 2, desc: "Cratère bordant le immense bassin Sud-Aitken.", img: driveUrl("1SfukoLFePBFYPFadgNj32KNkOWsop1RV") },
+      { name: "Cratère Aristarque", lat: 23.7, lon: -47.4, prio: 1, type: "Cratère volcanique lumineux", cat: "crater", css: "poi-crater", desc: "Le cratère le plus brillant de la Lune, riche en dépôts pyroclastiques.", img: driveUrl("19-dBWz2W98TJNxgUTcQTyOzYDc6YIerc") },
+      { name: "Cratère Copernic", lat: 9.6, lon: -20.1, prio: 1, type: "Cratère à rayons majeurs", cat: "crater", css: "poi-crater", desc: "Archétype du cratère d'impact lunaire (93 km), ceinturé d'un immense réseau d'éjectas clairs.", img: driveUrl("1b6I3hvgQfkuxqGldTmQE6tT8o9kb_4y0") },
+      { name: "Cratère Copernic - pic central", lat: 9.6, lon: -20.1, prio: 2, desc: "Massif montagneux central s'élevant à 1,2 km au plancher du cratère Copernic.", img: driveUrl("1-cEMvUyi2-aRZokiEcEVxBUQnXnPzEkW") },
+      { name: "Cratère Eimmart A", lat: 24.4, lon: 64.9, prio: 2, desc: "Cratère d'impact satellite.", img: driveUrl("1Soipl8XumzfT-XgXS-Zsnp-IJQX_AS3C") },
+      { name: "Cratère Giordano Bruno", lat: 35.9, lon: 102.8, prio: 1, type: "Cratère d'impact très récent", cat: "crater", css: "poi-crater", desc: "Le cratère récent le plus marquant de la face cachée avec des éjectas immaculés.", img: driveUrl("1Ln-uIjMacGX66FHzCPUyp1rhBHioK0oy") },
+      { name: "Cratère Goclenius", lat: -10.0, lon: 45.0, prio: 2, desc: "Cratère recoupé par un système de rainures tectoniques.", img: driveUrl("17BTQPdD_vSsnMnuMrdpHDg1j7QW6nN3L") },
+      { name: "Cratère Hawke", lat: -85.1, lon: -332.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1fggQDZF_hrdP1mLqhEE32_OnwKjeG_26") },
+      { name: "Cratère Hell Q", lat: -32.5, lon: -5.7, prio: 2, desc: "Cratère satellite.", img: driveUrl("1Sq7mXQNsKw3xtJH0J5AHfBK8Z_9spxtu") },
+      { name: "Cratère Moltke", lat: -0.6, lon: 24.2, prio: 2, desc: "Cratère d'impact proche du site d'Apollo 11.", img: driveUrl("1K6FaapvQJkbgNpOHllreeop--I3wU2b4") },
+      { name: "Cratère Pierazzo", lat: 3.1, lon: -200.5, prio: 2, desc: "Cratère nommé en l'honneur d'E. Pierazzo.", img: driveUrl("13r2po90I_doOLWSwfH3xYjmHF1EzX20d") },
+      { name: "Cratère Ryder", lat: -44.3, lon: -142.5, prio: 2, desc: "Cratère d'impact lunaire.", img: driveUrl("1Uy-MHQ9WvzTyd8B9zfiAWN0hGHGzFf69") },
+      { name: "Cratère Tycho", lat: -43.3, lon: -11.2, prio: 1, type: "Cratère rayonnant majeur", cat: "crater", css: "poi-crater", desc: "Cratère d'impact splendide célèbre pour ses rayons clairs traversant tout l'hémisphère sud lunaire.", img: driveUrl("1mSXwF3QXvK-wFZUsACg3DIoK7T2f-lYR") },
+      { name: "Cratère Tycho pic central", lat: -43.3, lon: -11.2, prio: 2, desc: "Pic central du cratère Tycho haut de plus de 2 km.", img: driveUrl("1s8EClVijUA1JRDOmsKmB8b10Wq99pJ1w") },
+      { name: "Cratère Wallach", lat: 4.8, lon: -32.4, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1hO8qz6lP9a6kq0vpej1NVzZfq-5Fri8D") },
+      { name: "Cratère Wargo", lat: -28.2, lon: -249.2, prio: 2, desc: "Cratère d'impact.", img: driveUrl("1gfhDr_BqH96NrrA8DyWk4HRsfmPmo705") },
+      { name: "Dômes de Gruithuisen", lat: 36.0, lon: -39.8, prio: 1, type: "Dômes volcaniques silicieux", cat: "volcano", css: "poi-volcano", desc: "Dômes volcaniques lunaires singuliers formés de laves riches en silice.", img: driveUrl("1cFG2ZGn1iwr_Kqk3VwMIsoGLj6vzfkiv") },
+      { name: "Mare Crisium", lat: 17.0, lon: 59.0, prio: 1, type: "Mer basaltique", cat: "mare", css: "poi-mare", desc: "Bassin d'impact circulaire isolé rempli de basaltes sombres.", img: driveUrl("106up7FHfAKsEEL5ltBAk9KsMQGuM_xkO") },
+      { name: "Mare Crisium crête rides", lat: 15.0, lon: 57.0, prio: 2, desc: "Rides tectoniques de compression dans la mer des Crises.", img: driveUrl("1dsspUaJTozt0l6eFF2fSMLyly6vNRLBD") },
+      { name: "Mare Fecunditatis", lat: -7.8, lon: 51.3, prio: 2, desc: "Mer de la Fécondité.", img: driveUrl("1V4wuYseBQF1DscbXrlemh2Q00dGAlXSP") },
+      { name: "Mare Humorum", lat: -24.4, lon: -38.6, prio: 2, desc: "Mer des Humeurs.", img: driveUrl("1E4Tc_ufSLc_1pgEG0sgQ0-PTv3J46lbo") },
+      { name: "Mare Imbrium", lat: 32.8, lon: -15.6, prio: 1, type: "Bassin d'impact géant", cat: "mare", css: "poi-mare", desc: "La Mer des Pluies, immense bassin d'impact cerclé de grandes chaînes de montagnes.", img: driveUrl("1Il3yBl5MqXWKEJ3KuD2jNOsGZp30HKOU") },
+      { name: "Mare Ingenii", lat: 33.5, lon: 163.5, prio: 2, desc: "Mer des Ingénuités.", img: driveUrl("1RO1kwKwWrOIvr7Tw9VPVJIUhgKd0IC2-") },
+      { name: "Mare Moscoviense", lat: 26.5, lon: 147.9, prio: 2, desc: "Mer de Moscou (face cachée).", img: driveUrl("1bUMwyb6a8zbE-uKMZXPoHdMDVL2EGVUC") },
+      { name: "Mare Nectaris", lat: -15.2, lon: 35.5, prio: 2, desc: "Mer du Nectar.", img: driveUrl("1mE3rrdA_iTchZSblIqj7DaqhwVackB8l") },
+      { name: "Mare Nubium", lat: -21.3, lon: -16.6, prio: 2, desc: "Mer des Nuages.", img: driveUrl("1W-F-Sy5QG-nenRw9Z9RAo3TyrBEbqw49") },
+      { name: "Mare Orientale", lat: -19.4, lon: -92.8, prio: 1, type: "Bassin d'impact en oeil", cat: "mare", css: "poi-mare", desc: "Superbe bassin d'impact concentrique situé à l'ouest de la face visible.", img: driveUrl("1rd5UO3Tkc06CVolucZseKPAIY_eqzCTd") },
+      { name: "Mare Serenitatis", lat: 28.0, lon: 17.5, prio: 2, desc: "Mer de la Sérénité.", img: driveUrl("1bQHyWPmBZxtyXiqOK-QZOpm_dOumEE8D") },
+      { name: "Mare Spumans", lat: 1.1, lon: 65.1, prio: 2, desc: "Mer des Écumes.", img: driveUrl("1nSfX6KLhOHAMzsR-3Bcf9vfMSt828_Af") },
+      { name: "Mare Tranquillitatis", lat: 8.5, lon: 31.4, prio: 1, type: "Mer d'atterrissage historique", cat: "mare", css: "poi-mare", desc: "La Mer de la Tranquillité, site historique des premiers pas humains (Apollo 11).", img: driveUrl("1oWdrMxfx-hnFkeisOP0lXDsJunRwsnP9") },
+      { name: "Mare Undarum", lat: 6.8, lon: 68.4, prio: 2, desc: "Mer des Vagues.", img: driveUrl("197_qezH_0XASdOsuxdYeDxlBR0kq2jt-") },
+      { name: "Massif de Malapert", lat: -84.9, lon: 10.4, prio: 2, desc: "Massif montagneux du pôle sud.", img: driveUrl("1cVyhsJLMmoKXjnK-1xQLOc-4Qo17a16Y") },
+      { name: "Mons Argaeus", lat: 19.3, lon: 29.0, prio: 2, desc: "Montagne lunaire.", img: driveUrl("1SxItBJyOo0v17kYsgtwVhFHII20VxOEq") },
+      { name: "Mons Delisle", lat: 29.8, lon: -34.5, prio: 2, desc: "Montagne lunaire.", img: driveUrl("1SosCxUjJh6MSDF7xcTL3QiRSDEATp-5f") },
+      { name: "Mons Hadley", lat: 26.5, lon: 3.4, prio: 2, desc: "Sommet proche du site d'Apollo 15.", img: driveUrl("18qYaAqLOrISD7upBklZ5zo03MR2efsa6") },
+      { name: "Mons La Hire", lat: 27.8, lon: -25.5, prio: 2, desc: "Montagne isolée dans la mer des Pluies.", img: driveUrl("1pYW_rCNVm48zXpGdplBabcpYLwhTF8or") },
+      { name: "Mons Latreille", lat: 18.4, lon: 61.8, prio: 2, desc: "Montagne lunaire.", img: driveUrl("1UYYrZq9fKy5btvQAhktMP7B9RhnaZ_jI") },
+      { name: "Mons Penck", lat: -10.0, lon: 21.8, prio: 2, desc: "Montagne lunaire.", img: driveUrl("1LyI85MkdEVs2Ei185MdIKvCXQv04aP2i") },
+      { name: "Mons Pico", lat: 45.7, lon: -8.9, prio: 2, desc: "Pic montagneux solitaire.", img: driveUrl("1e9jlJcCGypV0BBaniXy6xKPu8NDVZBcD") },
+      { name: "Mons Rümker", lat: 40.8, lon: -58.1, prio: 2, desc: "Complexe volcanique lunaire.", img: driveUrl("1P0VuW2vACGhQWtz2vr0H7b400mic71mT") },
+      { name: "Montes Agricola", lat: 29.1, lon: -54.2, prio: 2, desc: "Chaîne de collines.", img: driveUrl("1U1k1mTnd0Xkg7xwq-4XoLbwsKXoMuQXM") },
+      { name: "Montes Alpes", lat: 48.4, lon: 3.2, prio: 2, desc: "Les Monts Alpes lunaires.", img: driveUrl("1nK5ux3BjWwuCQDsJMawB84YBCp1Wwv5N") },
+      { name: "Montes Apenninus", lat: 18.9, lon: -3.7, prio: 1, type: "Chaîne de montagnes", cat: "volcano", css: "poi-volcano", desc: "La chaîne de montagnes la plus spectaculaire bordant Mare Imbrium.", img: driveUrl("14o1AJ6I1YD4VIyl1eTNWS63vNXW3WhNE") },
+      { name: "Montes Carpatus", lat: 14.5, lon: -24.4, prio: 2, desc: "Monts Carpates lunaires.", img: driveUrl("1ZwhMHP6i-pUHWtb5iNgkZzI7O6efyhNp") },
+      { name: "Montes Caucasus", lat: 38.4, lon: 10.0, prio: 2, desc: "Monts Caucase lunaires.", img: driveUrl("19DjvEq3jmqu_Wvs9Tk068GtxyUaWrfaZ") },
+      { name: "Montes Haemus", lat: 17.1, lon: 14.9, prio: 2, desc: "Monts Haemus.", img: driveUrl("1lpX3J2WGRz54TrtayuZ19TxnoKyk60xG") },
+      { name: "Montes Harbinger", lat: 27.0, lon: -41.0, prio: 2, desc: "Monts Harbinger.", img: driveUrl("1BzWptHdDsVcAzMY76rmSQq9VYmmEpTmI") },
+      { name: "Montes Recti", lat: 48.4, lon: -20.0, prio: 2, desc: "Monts Droits.", img: driveUrl("1Xk4ThGv33i2jouz5DTd4XETZbS_gJdcG") },
+      { name: "Montes Riphaeus", lat: -7.7, lon: -28.1, prio: 2, desc: "Monts Riphaeus.", img: driveUrl("1BoUERYsjLojKhEAI37gpIGWjhfNxG6If") },
+      { name: "Montes Secchi", lat: 3.0, lon: 43.0, prio: 2, desc: "Monts Secchi.", img: driveUrl("1fE2oxWaKY6RmxBZGVLH9yAJ-vFzE_lt6") },
+      { name: "Montes Spitzbergen", lat: 34.5, lon: -5.0, prio: 2, desc: "Monts Spitzberg.", img: driveUrl("1XtkLFlkzrvYp-_zwkVLJ4hUu7tdNVp6I") },
+      { name: "Montes Taurus", lat: 27.3, lon: 40.4, prio: 2, desc: "Monts Taurus.", img: driveUrl("1qCf90Vot7M_hjByICU21Chq4_Fggni7O") },
+      { name: "Montes Teneriffe", lat: 47.9, lon: -13.9, prio: 2, desc: "Monts Tenerife.", img: driveUrl("1ALKypLRoK2_5I3h2dEv_6EXo5GRukt6n") },
+      { name: "Montes Zeeman", lat: -75.0, lon: -135.0, prio: 2, desc: "Monts Zeeman.", img: driveUrl("1baFPUJ2LnukYBXgpIAz3OTHXvP0NDOPw") },
+      { name: "Oceanus Procellarum", lat: 18.4, lon: -57.4, prio: 1, type: "Immense plaine basaltique", cat: "mare", css: "poi-mare", desc: "L'Océan des Tempêtes, la plus vaste mer de lave de la Lune.", img: driveUrl("18CigpaS7seCeExlfRYa4bEhP06fNHx2t") },
+      { name: "Vallis Alpes", lat: 48.5, lon: 3.2, prio: 2, desc: "Vallée encaissée fracturée dans les Alpes lunaires.", img: driveUrl("1AO0J7enSOVELazGbn9astomSaKMr9KSB") },
+      { name: "Vallis Palitzsch", lat: -26.5, lon: 64.2, prio: 2, desc: "Vallée lunaire.", img: driveUrl("1n8xALI921CBdf9AOBRT3p_YvzMVefjue") },
+      { name: "Vallis Schröteri", lat: 26.2, lon: -50.8, prio: 1, type: "Sinueuse vallée volcanique", cat: "valley", css: "poi-valley", desc: "La plus grande vallée sinueuse de la Lune, ancienne rivière de lave.", img: driveUrl("1ac1PJmJiEvdTcEMbsj3PVgceAeXdQ0wL") }
+    ].map(d => ({
+      name: d.name, type: d.type || "Relief lunaire", cat: d.cat || "crater", css: d.css || "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio || 1, desc: d.desc, img: d.img,
+      metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
+    }));
+  }
+
+  // Liste complète des POI de Mars
+  function getMarsPOIs() {
+    return [
+      { name: "Mons Olympus", lat: 18.65, lon: 226.2, prio: 1, type: "Volcan bouclier géant", cat: "volcano", css: "poi-volcano", desc: "Le plus haut volcan du système solaire (~22 km d'altitude, 600 km de diamètre).", metrics: [{ label: "Altitude", val: "21,9 km" }, { label: "Diamètre", val: "600 km" }], img: driveUrl("1j8bzpV8v7px7wwlbv4oBZBlFpP7G0QKJ") },
+      { name: "Chaos Aram", lat: 2.6, lon: 21.5, prio: 2, desc: "Région chaotique de effondrements anciens.", img: driveUrl("1RclEgv47IOTnEmHXNK6SC77k5nDosTWL") },
+      { name: "Chaos Echus", lat: -7.8, lon: 73.5, prio: 2, desc: "Source d'inondations anciennes.", img: driveUrl("1juTZ3L1U6UIZkZJN4nHVFZTWI1R7Oh5X") },
+      { name: "Chasma Boreale", lat: 82.8, lon: 312.5, prio: 1, desc: "Immense canyon tranchant la calotte polaire nord.", img: driveUrl("1Gg3bzGuAKych-wMT7vrWyBMGjIxGXDFa") },
+      { name: "Chasma Candor", lat: -4.8, lon: 289.2, prio: 2, desc: "Branche de Valles Marineris.", img: driveUrl("1KotL_2CP5qzwOlPY9mp9TiwIhWyRj5pD") },
+      { name: "Chasma Coprates", lat: -13.4, lon: 295.2, prio: 2, desc: "Canyon majeur.", img: driveUrl("1FeTAa5MCdjk7qa16xAlSTRLL6yRIZzXZ") },
+      { name: "Chasma Ganges", lat: -8.5, lon: 275.5, prio: 2, desc: "Canyon marquant.", img: driveUrl("1PzVyKGgwUf7adP71w-b7DzfhAVflzFFb") },
+      { name: "Chasma Melas", lat: -9.8, lon: 283.2, prio: 2, desc: "Partie profonde de Valles Marineris.", img: driveUrl("1hKaJD__kkKwijbUd56C5wBKMU04vdpe_") },
+      { name: "Cratère Bacolor", lat: -32.5, lon: 236.5, prio: 2, desc: "Cratère martien.", img: driveUrl("1rSDKCQjVjW1wB-P0B6fOZ8igeDJzOwjm") },
+      { name: "Cratère Danielson", lat: 7.9, lon: 167.2, prio: 2, desc: "Cratère aux superbes strates sédimentaires.", img: driveUrl("1245jKELlUr_ZT2_gPnCwKXQMEdcX-SZZ") },
+      { name: "Cratère Endurance", lat: -2.1, lon: 5.5, prio: 2, desc: "Exploré par le rover Opportunity.", img: driveUrl("1EyTgPjPBfQmzsQzvIUF7bLHOhgmGi02i") },
+      { name: "Cratère Galle (Happy Face)", lat: 51.2, lon: 30.9, prio: 1, type: "Cratère visage rigolo", cat: "crater", css: "poi-crater", desc: "Cratère célèbre pour sa forme accidentelle rappelant un smiley géant.", img: driveUrl("1wsOrsrK5g-zRvqWi3WE9ykT4pCj7r98O") },
+      { name: "Cratère Jezero", lat: 18.38, lon: 77.58, prio: 1, type: "Ancien lac de cratère", cat: "crater", css: "poi-crater", desc: "Site d'atterrissage du rover Perseverance, abritant un ancien delta fluvial.", img: driveUrl("1ABbL0s6YDGd114pbqZKjoeRHAd7TVEf0") },
+      { name: "Cratère Korolev", lat: 73.0, lon: 195.5, prio: 1, type: "Cratère de glace éternelle", cat: "crater", css: "poi-crater", desc: "Grand cratère de 82 km rempli en permanence d'un épais glacier de glace d'eau pure.", img: driveUrl("1uMsIO6PlAOi0-96C0iWdMqvGr9kUzPLQ") },
+      { name: "Cratère Ours", lat: 50.5, lon: 320.5, prio: 2, desc: "Forme géologique en patte d'ours.", img: driveUrl("1W7tm5DP2me16vBI370E6DwUNse6MCMTW") },
+      { name: "Cratère Proctor", lat: -47.4, lon: 329.7, prio: 2, desc: "Cratère martien aux dunes sombres.", img: driveUrl("19--EK0FPtb3A0IlhjAhc29j--sX_coKq") },
+      { name: "Cratère Victoria", lat: -2.0, lon: 5.5, prio: 2, desc: "Cratère exploré par Opportunity.", img: driveUrl("1B_hIE0AgnsFXoChljrt9BSTRYeCtF30U") },
+      { name: "Hill Husband", lat: -14.5, lon: 175.4, prio: 2, desc: "Colline des Columbia Hills.", img: driveUrl("1GjLbCe9j-T_xViqNBQ5YSkQULwxJYyWt") },
+      { name: "Mare Boreum", lat: 79.5, lon: 320.5, prio: 2, desc: "Plaine boréale.", img: driveUrl("1cMW81BMfibWGmUtgj_dfMa01tJQgzUcQ") },
+      { name: "Mons Aeolis / Sharp", lat: -5.1, lon: 222.6, prio: 1, type: "Montagne stratifiée", cat: "volcano", css: "poi-volcano", desc: "Immense montagne au centre du cratère Gale, explorée par Curiosity.", img: driveUrl("1LoLqDnTb2Dc_ZrI3JdW-NLhbzL1VBTo-") },
+      { name: "Mons Alba", lat: 40.5, lon: 249.5, prio: 2, desc: "Volcan bouclier extrêmement étendu.", img: driveUrl("1BkJI3Tz7h8-sGtaSYL5sap_F3QtN6wPZ") },
+      { name: "Mons Albor Tholus", lat: 18.8, lon: 150.4, prio: 2, desc: "Volcan d'Elysium.", img: driveUrl("1j6aypA20to0AkrpDOEUCyCjdBw1YLm4s") },
+      { name: "Mons Apollinaris", lat: -9.3, lon: 174.4, prio: 2, desc: "Volcan d'Hesperia Planum.", img: driveUrl("1OT38cP7BE_ic9NBs2kG5vKozWjgd5jfL") },
+      { name: "Mons Arsia", lat: -8.4, lon: 238.9, prio: 1, type: "Volcan bouclier de Tharsis", cat: "volcano", css: "poi-volcano", desc: "Le plus méridional des trois grands volcans de Tharsis.", img: driveUrl("1tmATJZhiBPQStGYfJe-tXeegjj8A0p0W") },
+      { name: "Mons Ascraeus", lat: 11.9, lon: 255.5, prio: 1, type: "Volcan bouclier de Tharsis", cat: "volcano", css: "poi-volcano", desc: "Le plus septentrional des grands volcans de Tharsis.", img: driveUrl("1nHqMG2LQHeL4mIUkCTsgKQg8SE8PlTa5") },
+      { name: "Mons Elysium", lat: 25.0, lon: 213.0, prio: 2, desc: "Volcan de la province d'Elysium.", img: driveUrl("1EfUJ8BjOxLLx8R4OX_zal0aQ8dXunTa1") },
+      { name: "Mons Olympus", lat: 18.65, lon: 226.2, prio: 1, type: "Volcan bouclier géant", cat: "volcano", css: "poi-volcano", desc: "Le plus haut volcan du système solaire.", img: driveUrl("1j8bzpV8v7px7wwlbv4oBZBlFpP7G0QKJ") },
+      { name: "Mons Pavonis", lat: 0.5, lon: 246.3, prio: 1, type: "Volcan bouclier équatorial", cat: "volcano", css: "poi-volcano", desc: "Le volcan central de la chaîne de Tharsis.", img: driveUrl("1wxDDBHk6v4wlO6E8X8wupGVYKK2Qtpvr") },
+      { name: "Noctis Labyrinthus", lat: -7.3, lon: 257.5, prio: 1, type: "Labyrinthe tectonique", cat: "valley", css: "poi-valley", desc: "Dédale complexe de profonds canyons formés par des failles d'effondrement.", img: driveUrl("1txutW2-T_nhUpJzVRrpC7Y9tVoG39qKO") },
+      { name: "Valles Marineris", lat: -14.0, lon: 300.0, prio: 1, type: "Système de canyons géant", cat: "valley", css: "poi-valley", desc: "La cicatrice canyonnière la plus gigantesque de tout le système solaire (4 000 km de long).", img: driveUrl("1HBRFewBRHp7mlg2ERn0VGIwRj3yV5Um3") }
+    ].map(d => ({
+      name: d.name, type: d.type || "Relief martien", cat: d.cat || "crater", css: d.css || "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio || 1, desc: d.desc, img: d.img,
+      metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
+    }));
+  }
+
+  // POI Cérès
+  function getCeresPOIs() {
+    return [
+      { name: "Cratère Occator", lat: 19.8, lon: 239.3, prio: 1, type: "Cratère aux taches brillantes", cat: "crater", css: "poi-crater", desc: "Cratère célèbre pour ses mystérieux dépôts de carbonate de sodium très réfléchissants (sels de saumure).", img: driveUrl("1JU1ggXgTZoInRT9rlz_KpffFNnpsSCsp") },
+      { name: "Cratère Dantu", lat: 24.1, lon: 138.3, prio: 2, desc: "Cratère d'impact majeur de Cérès.", img: driveUrl("1vh3U7ioFjzE_7O8Fcn39xJXDScx53BVj") },
+      { name: "Cratère Haulani", lat: 5.8, lon: 10.6, prio: 2, desc: "Cratère jeune aux éjectas bleutés et vifs.", img: driveUrl("1-r8TGF1HnmKNzqTjIrh6DQl54CrYMOBn") },
+      { name: "Cratère Kerwan", lat: -10.5, lon: 123.5, prio: 2, desc: "Ancien bassin d'impact aux dimensions colossales.", img: driveUrl("1wYGWg1t5fK437McHHvYrX8k499h4WBL9") },
+      { name: "Cratère Oxo", lat: 42.4, lon: 359.1, prio: 2, desc: "Cratère abritant de la glace d'eau pure à nu.", img: driveUrl("1lg5V0sNBBuB6cKJmeqGCHrTz9fWP0Q45") },
+      { name: "Cratère Urvara", lat: -45.7, lon: 249.4, prio: 2, desc: "Grand cratère doté d'un pic central proéminent.", img: driveUrl("1w-UaS1IdVsif6CV4p8sahoRJSX2bPRVJ") },
+      { name: "Cratère Yalode", lat: -42.4, lon: 293.7, prio: 2, desc: "Bassin d'impact austral.", img: driveUrl("19O02A_yt1DTUFv10QT2Bypzy0To7Iook") },
+      { name: "Mons Ahura", lat: 16.0, lon: 33.0, prio: 1, type: "Cryovolcan", cat: "volcano", css: "poi-volcano", desc: "Ahuna Mons, l'unique véritable cryovolcan conique remarquable de la planète naine Cérès (hauteur de 4 km).", img: driveUrl("1LIVieDH0Z38n-H2z0xHNgR788JKrX0cu") }
+    ].map(d => ({
+      name: d.name, type: d.type || "Structure de Cérès", cat: d.cat || "crater", css: d.css || "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio || 1, desc: d.desc, img: d.img,
+      metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
+    }));
+  }
+
+  // POI Vesta
+  function getVestaPOIs() {
+    return [
+      { name: "Cratère Marcia", lat: 10.3, lon: 195.8, prio: 1, type: "Cratère d'impact", cat: "crater", css: "poi-crater", desc: "Le plus jeune des grands cratères de Vesta, tranchant nettement les terrains environnants.", img: driveUrl("1vp35NeQzGrcHlk9DRbjDkwYYxZbvGv25") },
+      { name: "Cratère Claudia", lat: -1.8, lon: 200.5, prio: 2, desc: "Cratère de référence pour le système de coordonnées de Vesta.", img: driveUrl("1tGr_TccLd0m2eylyFYzKa4K0Nwm_UnEk") },
+      { name: "Divalia Fossae", lat: -10.0, lon: 350.0, prio: 1, type: "Système de failles géantes", cat: "valley", css: "poi-valley", desc: "Immenses failles de fractures équatoriales ceinturant l'astéroïde, nées de l'impact géant du pôle sud.", img: driveUrl("1ScpfcKyJBUp95vq3rVpmXLKT0uZh9WIc") }
+    ].map(d => ({
+      name: d.name, type: d.type || "Structure de Vesta", cat: d.cat || "crater", css: d.css || "poi-crater", lat: d.lat, lon: d.lon,
+      priority: d.prio || 1, desc: d.desc, img: d.img,
+      metrics: [{ label: "Latitude", val: `${d.lat}°` }, { label: "Longitude", val: `${d.lon}°` }]
+    }));
+  }
+
+  // Satellites POI extérieurs
+  function getJupiterPOIs() {
+    return [
+      { name: "Grande Tache Rouge (GRS)", lat: -22.0, lon: 180.0, prio: 1, type: "Anticyclone colossal", cat: "storm", css: "poi-storm", desc: "Tempête anticyclonique gigantesque active depuis plus de 350 ans.", metrics: [{ label: "Largeur", val: "~16 000 km" }], img: driveUrl("1NohOU6Wh8KcajOBhyUz0hiXYmSAVEw_s") }
     ];
   }
 
-  function getJupiterPOIs() {
+  function getEuropaPOIs() {
     return [
-      { name: "Grande Tache Rouge (GRS)", lat: -22.0, lon: 180.0, prio: 1, type: "Anticyclone colossal", cat: "storm", css: "poi-storm", desc: "Tempête anticyclonique gigantesque active depuis plus de 350 ans, capable d'engloutir plusieurs fois notre planète Terre entière dans ses tourbillons nuageux.", metrics: [{ label: "Largeur", val: "~16 000 km" }] }
+      { name: "Cratère Cilix", lat: 1.8, lon: 53.6, prio: 1, type: "Cratère impact banquise", cat: "crater", css: "poi-crater", desc: "Cratère d'impact sans relief prononcé, effondré dans la croûte de glace d'Europe.", img: driveUrl("1h6Hxg9XM4MMpUDPZ9FbPTKKPt_uaztu6") },
+      { name: "Cratère Pwyll", lat: -25.2, lon: 271.2, prio: 1, type: "Cratère rayonnant", cat: "crater", css: "poi-crater", desc: "Cratère très lumineux entouré de traînées d'éjectas glacés brillants.", img: driveUrl("1tV1secQkcnePIuWGSR95xH_QsB5VSYYG") }
+    ];
+  }
+
+  function getGanymedePOIs() {
+    return [
+      { name: "Cratère Gula", lat: 60.5, lon: 12.5, prio: 2, desc: "Cratère d'impact de Ganymède.", img: driveUrl("1RWvb0xzGo7fYni9NbQJs-_wou3i35tdG") },
+      { name: "Cratère Neith", lat: 10.5, lon: 6.5, prio: 2, desc: "Cratère d'impact lumineux.", img: driveUrl("1VT5nrZqrj_F1fp4SN2sXZ7vkPLXNNWdC") },
+      { name: "Cratère Tros", lat: 10.8, lon: 27.2, prio: 1, type: "Cratère rayonnant", cat: "crater", css: "poi-crater", desc: "Cratère de Ganymède doté de superbes systèmes de rayons de glace pure.", img: driveUrl("1SqYv2sj0Cc4U6Lr1ybZUnq8E77uG0qWY") },
+      { name: "Enki Catena", lat: 48.2, lon: 39.5, prio: 1, type: "Chaîne de cratères", cat: "valley", css: "poi-valley", desc: "Chaîne d'impacts alignés, témoignant de la fragmentation d'une comète avant son impact.", img: driveUrl("1frHjyCT8ew5RDgT3Gxjq9_zVjTzCXGIo") }
+    ];
+  }
+
+  function getEnceladusPOIs() {
+    return [
+      { name: "Cratère Dunyazad", lat: -42.2, lon: 300.5, prio: 2, desc: "Cratère d'impact d'Encelade.", img: driveUrl("1VHavr2TpXBw8QlqdcM__YE7irBQvxhtL") },
+      { name: "Harran Sulci", lat: 30.5, lon: 310.2, prio: 2, desc: "Sillons tectoniques parallèles.", img: driveUrl("1yDKc_2F9QlAoTjtdMT17r2Pugoej8I1_") },
+      { name: "Labtayt Sulci", lat: -75.5, lon: 330.0, prio: 2, desc: "Fractures de surface.", img: driveUrl("1eoHF679U8R45FujUlK475D7Z3evIz4ih") },
+      { name: "Samarkand Sulci", lat: -30.0, lon: 325.0, prio: 1, type: "Région tectonique active", cat: "tecto", css: "poi-tecto", desc: "Terrain fortement strié de failles et de jeunes fractures de la banquise.", img: driveUrl("1l0FxHpRMLIYtcrdnEXa8RKdOoFE4PjUw") }
+    ];
+  }
+
+  function getPlutoPOIs() {
+    return [
+      { name: "Sputnik Planitia", lat: 24.5, lon: 175.0, prio: 1, type: "Glacier d'azote convectif", cat: "valley", css: "poi-valley", desc: "Gigantesque bassin en forme de cœur composé de glaces d'azote molles animées par des mouvements de convection.", img: driveUrl("19maDiWDOZT_AWzX4hRqc5SOBqie3Vjkf") }
     ];
   }
 
@@ -731,7 +1145,8 @@
       gasComposition: [{ name: "CO2", pct: 96.5, color: "#f87171" }, { name: "Diazote", pct: 3.5, color: "#60a5fa" }],
       atmosphere: "92 bars avec phénomène de super-rotation atmosphérique.", climate: "465 °C constants.", atmoMetrics: [{ label: "Pression", val: "92 bars" }],
       orbit: "Rotation rétrograde lente en 243 jours.", orbitSemiMajor: 0.723, orbitEccentricity: 0.0067, orbitMetrics: [{ label: "Périhélie", val: "107,5 M km" }],
-      missions: [{ year: "1990", name: "Magellan", note: "Cartographie radar." }]
+      missions: [{ year: "1990", name: "Magellan", note: "Cartographie radar." }],
+      pois: getVenusPOIs()
     },
     "Terre": {
       name: "Terre", type: "Planète tellurique océanique", scale: 1.0, color: 0x2277ff, texture: TERRE_TEX_URL,
@@ -801,7 +1216,8 @@
       geophysics: "Océan souterrain d'eau liquide sous une croûte de glace.", magnetism: "Champ induit.", geoMetrics: [{ label: "Banquise", val: "15-25 km" }],
       gasComposition: [{ name: "Oxygène", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère ténue.", climate: "-160 °C.",
       atmoMetrics: [{ label: "Pression", val: "10⁻¹¹ bar" }], orbit: "Résonance 2:1.", orbitSemiMajor: 0.0045, orbitEccentricity: 0.009,
-      orbitMetrics: [{ label: "Distance", val: "671 000 km" }], missions: [{ year: "2024", name: "Europa Clipper", note: "Habitabilité." }]
+      orbitMetrics: [{ label: "Distance", val: "671 000 km" }], missions: [{ year: "2024", name: "Europa Clipper", note: "Habitabilité." }],
+      pois: getEuropaPOIs()
     },
     "Ganymede": {
       name: "Ganymède", type: "Plus grande lune", scale: 0.41, color: 0x857e74, texture: LUNE_TEX_URL,
@@ -812,7 +1228,8 @@
       geophysics: "Tectonique de surface et champs magnétiques propres.", magnetism: "Intrinsèque.", geoMetrics: [{ label: "Masse", val: "0,025 x Terre" }],
       gasComposition: [{ name: "Oxygène", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère.", climate: "-163 °C.",
       atmoMetrics: [{ label: "Pression", val: "10⁻¹² bar" }], orbit: "Orbite en 7,15 jours.", orbitSemiMajor: 0.0071, orbitEccentricity: 0.0013,
-      orbitMetrics: [{ label: "Distance", val: "1 070 400 km" }], missions: [{ year: "2023", name: "JUICE", note: "Étude géophysique." }]
+      orbitMetrics: [{ label: "Distance", val: "1 070 400 km" }], missions: [{ year: "2023", name: "JUICE", note: "Étude géophysique." }],
+      pois: getGanymedePOIs()
     },
     "Callisto": {
       name: "Callisto", type: "Lune cratérisée", scale: 0.38, color: 0x5a544b, texture: LUNE_TEX_URL,
@@ -930,7 +1347,8 @@
       orbit: "Orbite de 33 heures autour de Saturne.",
       orbitSemiMajor: 0.0015, orbitEccentricity: 0.0047,
       orbitMetrics: [{ label: "Distance Saturne", val: "238 000 km" }, { label: "Période", val: "33 heures" }],
-      missions: [{ year: "2005", name: "Cassini", note: "Découverte des geysers organiques." }]
+      missions: [{ year: "2005", name: "Cassini", note: "Découverte des geysers organiques." }],
+      pois: getEnceladusPOIs()
     },
     "Uranus": {
       name: "Uranus", type: "Géante de glaces inclinée", scale: 4.0, color: 0x68b9c7, texture: URANUS_TEX_URL,
@@ -1020,7 +1438,32 @@
       orbit: "Orbite inclinée (17,16°) et excentrique.",
       orbitSemiMajor: 39.48, orbitEccentricity: 0.2488,
       orbitMetrics: [{ label: "Périhélie", val: "4,44 Md km" }, { label: "Aphélie", val: "7,38 Md km" }],
-      missions: [{ year: "2015", name: "New Horizons", note: "Survol historique rasant." }]
+      missions: [{ year: "2015", name: "New Horizons", note: "Survol historique rasant." }],
+      pois: getPlutoPOIs()
+    },
+    "Cérès": {
+      name: "Cérès", type: "Planète naine (Astéroïde géant)", scale: 0.08, color: 0x94a3b8, texture: S3_CDN + "pluto.jpg",
+      desc: "Le plus grand astéroïde de la ceinture principale, classé planète naine, riche en minéraux hydratés et en sels.",
+      cutaway: [{ name: "Noyau rocheux", radius: 0.60, color: "#475569", temp: "160 K" }, { name: "Manteau boueux", radius: 1.00, color: "#64748b", temp: "140 K" }],
+      overviewMetrics: [{ label: "Diamètre", val: "946 km" }, { label: "Masse", val: "9,39 × 10²⁰ kg" }],
+      geodynamicsGauges: [{ label: "Cryovolcanisme", val: 80, color: "#38bdf8" }],
+      geophysics: "Présence de saumures piégées en profondeur.", magnetism: "Nul.", geoMetrics: [{ label: "Ahuna Mons", val: "4 km" }],
+      gasComposition: [{ name: "Vapeur d'eau", pct: 100, color: "#38bdf8" }], atmosphere: "Exosphère éphémère de vapeur d'eau.", climate: "-105 °C.",
+      atmoMetrics: [{ label: "Pression", val: "0 Pa" }], orbit: "Ceinture principale.", orbitSemiMajor: 2.767, orbitEccentricity: 0.079,
+      orbitMetrics: [{ label: "Période", val: "4,6 ans" }], missions: [{ year: "2015", name: "Dawn (NASA)", note: "Mise en orbite." }],
+      pois: getCeresPOIs()
+    },
+    "Vesta": {
+      name: "Vesta", type: "Astéroïde géant différencié", scale: 0.04, color: 0x78716c, texture: S3_CDN + "pluto.jpg",
+      desc: "Astéroïde massif de la ceinture principale doté d'une croûte basaltique et d'un immense bassin d'impact au pôle sud.",
+      cutaway: [{ name: "Noyau Fe-Ni", radius: 0.35, color: "#dc2626", temp: "300 K" }, { name: "Manteau", radius: 0.85, color: "#d97706", temp: "220 K" }, { name: "Croûte basaltique", radius: 1.00, color: "#78716c", temp: "150 K" }],
+      overviewMetrics: [{ label: "Diamètre", val: "525 km" }, { label: "Bassin Rheasilvia", val: "505 km" }],
+      geodynamicsGauges: [{ label: "Différenciation", val: 100, color: "#f97316" }],
+      geophysics: "Corps rocheux différencié avec noyau métallique.", magnetism: "Ancien paléomagnétisme.", geoMetrics: [{ label: "Rheasilvia", val: "Profondeur 19 km" }],
+      gasComposition: [{ name: "Vide", pct: 100, color: "#334155" }], atmosphere: "Nulle.", climate: "-110 °C à -20 °C.",
+      atmoMetrics: [{ label: "Pression", val: "0 Pa" }], orbit: "Ceinture principale.", orbitSemiMajor: 2.362, orbitEccentricity: 0.088,
+      orbitMetrics: [{ label: "Période", val: "3,63 ans" }], missions: [{ year: "2011", name: "Dawn (NASA)", note: "Cartographie complète." }],
+      pois: getVestaPOIs()
     }
   };
 
@@ -1036,8 +1479,10 @@
       id: "Mars", name: "Mars", radius: 1.0, dist: 41, speed: 0.012, color: 0xc1440e, texture: MARS_TEX_URL, 
       moons: [{ id: "Phobos", name: "Phobos", radius: 0.2, dist: 2.2, speed: 0.06, color: 0x5a5550 }] 
     },
+    { id: "Vesta", name: "Vesta", radius: 0.45, dist: 48, speed: 0.010, color: 0x78716c, texture: S3_CDN + "pluto.jpg" },
+    { id: "Cérès", name: "Cérès", radius: 0.55, dist: 52, speed: 0.009, color: 0x94a3b8, texture: S3_CDN + "pluto.jpg" },
     { 
-      id: "Jupiter", name: "Jupiter", radius: 3.0, dist: 57, speed: 0.007, color: 0xd4a373, texture: JUPITER_TEX_URL,
+      id: "Jupiter", name: "Jupiter", radius: 3.0, dist: 64, speed: 0.007, color: 0xd4a373, texture: JUPITER_TEX_URL,
       moons: [
         { id: "Io", name: "Io", radius: 0.3, dist: 4.8, speed: 0.05, color: 0xd4b333, texture: S3_CDN + "io.jpg" },
         { id: "Europe", name: "Europe", radius: 0.28, dist: 6.0, speed: 0.038, color: 0xb0c4de, texture: S3_CDN + "europa.jpg" },
@@ -1046,28 +1491,27 @@
       ]
     },
     { 
-      id: "Saturne", name: "Saturne", radius: 2.5, dist: 73, speed: 0.005, color: 0xe2bf7d, texture: SATURN_TEX_URL, hasRings: true,
+      id: "Saturne", name: "Saturne", radius: 2.5, dist: 82, speed: 0.005, color: 0xe2bf7d, texture: SATURN_TEX_URL, hasRings: true,
       moons: [
         { id: "Titan", name: "Titan", radius: 0.38, dist: 5.2, speed: 0.032, color: 0xd28d34, texture: VENUS_ATM_URL },
         { id: "Encelade", name: "Encelade", radius: 0.2, dist: 4.0, speed: 0.045, color: 0xf0f8ff, texture: S3_CDN + "europa.jpg" }
       ]
     },
     { 
-      id: "Uranus", name: "Uranus", radius: 1.9, dist: 89, speed: 0.0035, color: 0x68b9c7, texture: URANUS_TEX_URL,
+      id: "Uranus", name: "Uranus", radius: 1.9, dist: 100, speed: 0.0035, color: 0x68b9c7, texture: URANUS_TEX_URL,
       moons: [{ id: "Titania", name: "Titania", radius: 0.25, dist: 3.5, speed: 0.03, color: 0x908a82, texture: LUNE_TEX_URL }] 
     },
     { 
-      id: "Neptune", name: "Neptune", radius: 1.8, dist: 104, speed: 0.0025, color: 0x2563eb, texture: NEPTUNE_TEX_URL,
+      id: "Neptune", name: "Neptune", radius: 1.8, dist: 116, speed: 0.0025, color: 0x2563eb, texture: NEPTUNE_TEX_URL,
       moons: [{ id: "Triton", name: "Triton", radius: 0.3, dist: 3.6, speed: -0.028, color: 0xa8b8b0, texture: LUNE_TEX_URL }] 
     },
-    { id: "Pluton", name: "Pluton", radius: 0.6, dist: 122, speed: 0.0018, color: 0xb59e82, texture: S3_CDN + "pluto.jpg", incline: 0.29 }
+    { id: "Pluton", name: "Pluton", radius: 0.6, dist: 135, speed: 0.0018, color: 0xb59e82, texture: S3_CDN + "pluto.jpg", incline: 0.29 }
   ];
 
   let scene, camera, renderer, controls;
   let currentMode = 'GLOBAL';
   let globalEntities = [];
   let globalOrbits = [];
-  let beltLabels = [];
   let studioMesh = null;
   let studioPois = [];
   let animId = null;
@@ -1093,21 +1537,6 @@
 
   const textureLoader = new THREE.TextureLoader();
   textureLoader.setCrossOrigin('anonymous');
-
-  function createDotTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 16;
-    canvas.height = 16;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    grad.addColorStop(0.5, 'rgba(180, 220, 255, 0.7)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 16, 16);
-    return new THREE.CanvasTexture(canvas);
-  }
-  const dotTexture = createDotTexture();
 
   const orbitalPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const raycaster = new THREE.Raycaster();
@@ -1212,9 +1641,8 @@
   }
 
   function clearLabels() {
-    document.getElementById("hover-tooltip").style.display = "none";
+    document.getElementById("labels-container").innerHTML = '<div id="hover-tooltip"></div>';
     studioPois = [];
-    beltLabels = [];
   }
 
   function launchGlobalMode() {
@@ -1245,23 +1673,6 @@
     ambientLightRef = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLightRef);
     applyLightingConfig(false);
-
-    buildAsteroids(47, 53, 80, 0x94a3b8);
-    buildAsteroids(115, 128, 100, 0x64748b);
-
-    const labelsCont = document.getElementById("labels-container");
-
-    const mainBeltLabel = document.createElement("div");
-    mainBeltLabel.className = "belt-label";
-    mainBeltLabel.textContent = "☄️ Ceinture d'Astéroïdes";
-    labelsCont.appendChild(mainBeltLabel);
-    beltLabels.push({ element: mainBeltLabel, pos: new THREE.Vector3(50, 0, 0) });
-
-    const kuiperBeltLabel = document.createElement("div");
-    kuiperBeltLabel.className = "belt-label";
-    kuiperBeltLabel.textContent = "❄️ Ceinture de Kuiper";
-    labelsCont.appendChild(kuiperBeltLabel);
-    beltLabels.push({ element: kuiperBeltLabel, pos: new THREE.Vector3(122, 0, 0) });
 
     globalEntities = [];
     globalOrbits = [];
@@ -1435,25 +1846,11 @@
     const legendItems = document.getElementById("legend-items");
     const legendTitle = document.getElementById("legend-title");
 
-    if (id === "Mercure") {
-      legendTitle.innerText = "Structures de Mercure :";
+    if (id === "Mercure" || id === "Vénus" || id === "Lune" || id === "Mars") {
+      legendTitle.innerText = `Structures de ${id} :`;
       legendItems.innerHTML = `
-        <div class="legend-row"><span class="legend-dot" style="background:#10b981;"></span> Planitiae (bassins volcaniques Drive)</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#f97316;"></span> Cratères d'impact (IAU)</div>
-      `;
-      legendBox.style.display = "flex";
-    } else if (id === "Mars") {
-      legendTitle.innerText = "Reliefs de Mars :";
-      legendItems.innerHTML = `
-        <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> Volcans & Tholi (Mons)</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#10b981;"></span> Vallées & Valles Marineris</div>
-      `;
-      legendBox.style.display = "flex";
-    } else if (id === "Lune") {
-      legendTitle.innerText = "Structures de la Lune :";
-      legendItems.innerHTML = `
-        <div class="legend-row"><span class="legend-dot" style="background:#f97316;"></span> Cratères d'impact majeurs</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#64748b;"></span> Maria & Mers basaltiques</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#f97316;"></span> Cratères d'impact</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#ef4444;"></span> Volcans & Monts</div>
       `;
       legendBox.style.display = "flex";
     } else {
@@ -1842,26 +2239,6 @@
     });
   }
 
-  function buildAsteroids(minR, maxR, count, col) {
-    const geo = new THREE.BufferGeometry();
-    const coords = [];
-    for (let i = 0; i < count; i++) {
-      const r = minR + Math.random() * (maxR - minR);
-      const theta = Math.random() * Math.PI * 2;
-      coords.push(Math.cos(theta) * r, (Math.random() - 0.5) * 1.8, Math.sin(theta) * r);
-    }
-    geo.setAttribute("position", new THREE.Float32BufferAttribute(coords, 3));
-    const mat = new THREE.PointsMaterial({
-      color: col,
-      size: 1.4,
-      map: dotTexture,
-      transparent: true,
-      opacity: 0.85,
-      depthWrite: false
-    });
-    scene.add(new THREE.Points(geo, mat));
-  }
-
   const worldPos = new THREE.Vector3();
   const prevWorldPos = new THREE.Vector3();
 
@@ -1891,18 +2268,6 @@
           }
         }
 
-        beltLabels.forEach(item => {
-          const screenPos = item.pos.clone().project(camera);
-          const x = (screenPos.x * 0.5 + 0.5) * stageW;
-          const y = (-(screenPos.y * 0.5) + 0.5) * stageH;
-          if (screenPos.z < 1) {
-            item.element.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-            item.element.style.opacity = '0.75';
-          } else {
-            item.element.style.opacity = '0';
-          }
-        });
-
       } else if (currentMode === 'STUDIO' && studioMesh) {
         if (isStudioRotating) {
           const curId = document.getElementById("body-selector").value;
@@ -1922,14 +2287,13 @@
             const normal = poiWorld.clone().normalize();
             const dot = normal.dot(eyeVec);
 
-            // LOD progressif : les étiquettes apparaissent selon le zoom (camDistance) et la priorité
             let isVisibleLOD = false;
             if (camDistance <= 2.2) {
-              isVisibleLOD = true; // Zoom max : tout s'affiche
+              isVisibleLOD = true;
             } else if (camDistance <= 3.2) {
-              isVisibleLOD = (item.priority <= 2); // Zoom moyen : priorité 1 et 2
+              isVisibleLOD = (item.priority <= 2);
             } else {
-              isVisibleLOD = (item.priority === 1); // Vue large : seulement les majeurs
+              isVisibleLOD = (item.priority === 1);
             }
 
             if (dot > 0.22 && isVisibleLOD) {
