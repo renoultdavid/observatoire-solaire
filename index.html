@@ -9,7 +9,7 @@
     html, body {
       background-color: #010206;
       color: #e2e8f0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden;
       width: 100%;
       height: 100%;
@@ -144,7 +144,6 @@
       z-index: 25;
     }
 
-    /* Étiquettes globales positionnées sous l'astre */
     .global-body-label {
       position: absolute;
       font-size: 10px;
@@ -494,18 +493,15 @@
       </div>
     </div>
 
-    <!-- Légende dynamique -->
     <div id="geo-legend" class="hud-card">
       <div class="legend-title" id="legend-title">Reliefs planétaires :</div>
       <div id="legend-items"></div>
     </div>
   </div>
 
-  <!-- Volet d'information interactif -->
   <div id="info-sidebar">
     <div class="info-content">
       
-      <!-- Fil d'Ariane retour planète depuis POI -->
       <div id="poi-back-breadcrumb" onclick="restoreCurrentBodyCard()">
         <span>←</span> <span id="breadcrumb-body-name">Revenir à la planète</span>
       </div>
@@ -532,17 +528,14 @@
         <button class="tab-btn" onclick="switchSidebarTab('history')">Histoire & Vol</button>
       </div>
 
-      <!-- Bloc Photo POI -->
       <div id="poi-photo-box">
         <img id="poi-photo" src="" alt="Photographie d'exploration">
         <div id="poi-photo-caption">Prise de vue d'exploration</div>
       </div>
 
-      <!-- ONGLET 1 : Identité & Métrologie -->
       <div id="pane-overview" class="tab-pane active">
         <p class="section-p" id="card-desc">-</p>
 
-        <!-- Comparateur d'échelle vectoriel côte-à-côte -->
         <div class="infographic-box" id="scale-container">
           <div class="info-subhead" id="scale-label">Échelle géométrique comparative</div>
           <div id="scale-svg-container"></div>
@@ -556,7 +549,6 @@
         <div class="grid-metrics" id="metrics-container"></div>
       </div>
 
-      <!-- ONGLET 2 : Géodynamique interne -->
       <div id="pane-geophysics" class="tab-pane">
         <div class="infographic-box">
           <div class="info-subhead">Indicateurs géodynamiques & physiques</div>
@@ -572,7 +564,6 @@
         <div class="grid-metrics" id="geo-metrics"></div>
       </div>
 
-      <!-- ONGLET 3 : Atmosphère & Climatologie -->
       <div id="pane-atmosphere" class="tab-pane">
         <div class="infographic-box" id="gas-box">
           <div class="info-subhead">Spectrométrie & Composition troposphérique</div>
@@ -588,7 +579,6 @@
         <div class="grid-metrics" id="atmo-metrics"></div>
       </div>
 
-      <!-- ONGLET 4 : Mécanique céleste & Orbite -->
       <div id="pane-orbit" class="tab-pane">
         <div class="infographic-box">
           <div class="info-subhead">Schéma orbital héliocentrique (Foyer réel F1)</div>
@@ -600,7 +590,6 @@
         <div class="grid-metrics" id="orbit-metrics"></div>
       </div>
 
-      <!-- ONGLET 5 : Histoire géologique & Exploration spatiale -->
       <div id="pane-history" class="tab-pane">
         <div class="section-title">🏛️ Chronostratigraphie & Évolution</div>
         <p class="section-p" id="history-desc">-</p>
@@ -665,7 +654,6 @@
   }
   const saturnRingTexture = createSaturnRingTexture();
 
-  // Texture de particules rondes pour éviter les carrés
   function createCircleParticleTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 32; canvas.height = 32;
@@ -742,7 +730,6 @@
     };
   }
 
-  // --- CATALOGUE INTÉGRAL MERCURE (TOUS LES 140+ RELIEFS RESTAURÉS SANS PERTE) ---
   function getMercuryPOIs() {
     const raw = [
       ["Cratère Abedin", 61.7, 349.3, "13XlMbv-4Zkw5ypCnWCXcTZW5L6q9clPH", 1, "crater"],
@@ -974,8 +961,6 @@
     ];
     return raw.map(r => createPOI(r[0], r[1], r[2], r[3], r[4], r[5]));
   }
-
-  // --- CATALOGUE INTÉGRAL VÉNUS RESTAURÉ ---
   function getVenusPOIs() {
     const raw = [
       ["Carmenta Farra", 3.5, 6.5, "1e3ifS06oYP1fFPQkjyoWlQ5pgbviQIRk", 1, "volcano", "Dôme aplati."],
@@ -1025,7 +1010,6 @@
     return raw.map(r => createPOI(r[0], r[1], r[2], r[3], r[4], r[5], r[6]));
   }
 
-  // --- CATALOGUE INTÉGRAL LUNE RESTAURÉ ---
   function getMoonPOIs() {
     const raw = [
       ["Cratère Abbe", -57.3, 174.8, "1Fp_eIcqeiGq02Hw8WV45eX6_HGZasNsx", 2, "crater"],
@@ -1096,7 +1080,6 @@
     return raw.map(r => createPOI(r[0], r[1], r[2], r[3], r[4], r[5]));
   }
 
-  // --- CATALOGUE INTÉGRAL MARS RESTAURÉ ---
   function getMarsPOIs() {
     const raw = [
       ["Chaos Aram", 2.6, -21.5, "1RclEgv47IOTnEmHXNK6SC77k5nDosTWL", 2, "valley"],
@@ -1161,7 +1144,6 @@
     return raw.map(r => createPOI(r[0], r[1], r[2], r[3], r[4], r[5], r[6]));
   }
 
-  // --- CATALOGUES INTÉGRAUX CÉRÈS & VESTA RESTAURÉS ---
   function getCeresPOIs() {
     const raw = [
       ["Cratère Achita", 25.8, 65.9, "1uRORcV4IGv-7ogRwxFE2VYyORRwL7gK4", 2, "crater"],
@@ -1235,10 +1217,7 @@
   function getPlutoPOIs() {
     return [createPOI("Sputnik Planitia", 19.5, 175.8, "19maDiWDOZT_AWzX4hRqc5SOBqie3Vjkf", 1, "mare", "Glacier d'azote convectif géant.")];
   }
-  
-  // ==========================================
-  // CATALOGUE INTÉGRAL DES FICHES ENCYCLOPÉDIQUES
-  // ==========================================
+
   const SYSTEM_SOLAR_CARD = {
     name: "Système Solaire",
     type: "Cortège Héliocentrique",
@@ -1895,7 +1874,6 @@
     globalBodyLabels = [];
   }
 
-  // Astéroïdes : texture circulaire propre, nombre allégé (850 points doux)
   function createAsteroidBelt() {
     const geom = new THREE.BufferGeometry();
     const count = 850;
@@ -2046,7 +2024,6 @@
       mesh.userData = { id: p.id, name: p.name };
       globalEntities.push({ pivot: orbitPivot, mesh: mesh, speed: p.speed, isMoon: false });
 
-      // Étiquette globale : Clic simple (suivi + fiche), Double clic (studio)
       const labelEl = document.createElement("div");
       labelEl.className = "global-body-label";
       labelEl.textContent = p.name;
@@ -2056,10 +2033,8 @@
         e.stopPropagation();
         const now = Date.now();
         if (now - lastTapTime < 320) {
-          // Double tap / double clic
           launchStudio(p.id);
         } else {
-          // Clic simple : focus direct et suivi
           focusAndTrackBody(p.id);
         }
         lastTapTime = now;
@@ -2142,7 +2117,6 @@
 
   const cameraOffset = new THREE.Vector3();
 
-  // Verrouillage et suivi immédiat de l'astre dès le clic
   function focusAndTrackBody(id) {
     currentSelectedBodyId = id;
     const entity = globalEntities.find(e => e.mesh.userData.id === id);
@@ -2455,7 +2429,6 @@
     }
   };
 
-  // Comparateur d'échelle vectoriel SVG précis
   function renderScaleComparisonSVG(targetScale, bodyName) {
     const container = document.getElementById("scale-svg-container");
     if (!targetScale || targetScale === 0) {
@@ -2762,7 +2735,6 @@
           globalEntities.forEach(e => { e.pivot.rotation.y += e.speed * timeSpeed * 0.4; });
         }
 
-        // Suivi orbital : la caméra accompagne continuellement la révolution du corps verrouillé
         if (isBodyLocked && lockedBodyId) {
           const lockedEntity = globalEntities.find(e => e.mesh.userData.id === lockedBodyId);
           if (lockedEntity) {
@@ -2776,7 +2748,6 @@
           }
         }
 
-        // Projection des étiquettes d'astres en vue globale
         if (globalLabelsVisible) {
           const camDist = camera.position.distanceTo(controls.target);
           globalBodyLabels.forEach(l => {
