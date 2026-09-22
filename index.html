@@ -1279,26 +1279,72 @@
       pois: []
     },
     "Mercure": {
-      name: "Mercure", type: "Planète tellurique dense", scale: 0.383, color: 0x8a8a8a, texture: S3_CDN + "mercury.jpg",
-      desc: "Monde calciné le plus proche du Soleil, dominé par un noyau métallique surdimensionné et marqué par des escarpements de faille de contraction thermique.",
+      name: "Mercure", 
+      type: "Planète tellurique dense (Herméenne)", 
+      scale: 0.3829, 
+      color: 0x8a8a8a, 
+      texture: S3_CDN + "mercury.jpg",
+      desc: "Monde tellurique le plus proche du Soleil, Mercure est dominé par un noyau ferreux géant occupant 85 % de son rayon. Dépourvu d'atmosphère substantielle régulatrice, il subit les gradients thermiques les plus violents du système solaire, tandis que son refroidissement a ridé sa croûte de gigantesques escarpements de faille chevauchante.",
       cutaway: [
-        { name: "Noyau métallique géant", radius: 0.85, color: "#dc2626", temp: "2 000 K" },
-        { name: "Manteau silicaté mince", radius: 0.95, color: "#d97706", temp: "1 200 K" },
-        { name: "Croûte rocheuse", radius: 1.00, color: "#64748b", temp: "100-700 K" }
+        { name: "Graine solide centrale (Fe-Ni)", radius: 0.40, color: "#991b1b", temp: "~2 400 K" },
+        { name: "Noyau externe liquide (Fe-S)", radius: 0.85, color: "#dc2626", temp: "~1 800 K" },
+        { name: "Manteau silicaté résiduel", radius: 0.95, color: "#d97706", temp: "~1 200 K" },
+        { name: "Croûte anorthositique & régolithe", radius: 1.00, color: "#64748b", temp: "100 - 700 K" }
       ],
-      overviewMetrics: [{ label: "Diamètre", val: "4 879 km" }, { label: "Masse", val: "0,055 x Terre" }, { label: "Densité", val: "5,427 g/cm³" }, { label: "Gravité", val: "3,7 m/s²" }],
-      geodynamicsGauges: [{ label: "Cratérisation", val: 98, color: "#f97316" }, { label: "Contraction globale", val: 85, color: "#ef4444" }, { label: "Fraction noyau", val: 85, color: "#38bdf8" }],
-      geophysics: "Refroidissement interne ayant provoqué une contraction radiale de plusieurs kilomètres, ridant la surface de falaises gigantesques (rupes).",
-      magnetism: "Champ magnétique dipolaire intrinsèque (~1 % de celui de la Terre), généré par une couche externe liquide du noyau de fer.",
-      geoMetrics: [{ label: "Rayon du noyau", val: "~2 020 km" }, { label: "Champ dipolaire", val: "~300 nT" }],
-      gasComposition: [{ name: "Oxygène", pct: 42.0, color: "#38bdf8" }, { name: "Sodium", pct: 29.0, color: "#fbbf24" }, { name: "Hydrogène", pct: 22.0, color: "#60a5fa" }],
-      atmosphere: "Exosphère ténue en renouvellement perpétuel sous l'impact du vent solaire et des micrométéorites.",
-      climate: "Écart thermique le plus violent du système solaire, de -180 °C la nuit à +430 °C au zénith.",
-      atmoMetrics: [{ label: "Pression", val: "~10⁻¹⁴ bar" }, { label: "Glace aux pôles", val: "Pondéreuse (cratères ombragés)" }],
-      orbit: "Résonance spin-orbite 3:2 stricte : 3 rotations sur son axe en 2 révolutions autour du Soleil.",
-      orbitSemiMajor: 0.387, orbitEccentricity: 0.2056, orbitMetrics: [{ label: "Périhélie", val: "46,0 M km" }, { label: "Aphélie", val: "69,8 M km" }],
-      history: "Chronologie structurée en 5 ères : Pré-Tolstoïen, Tolstoïen, Calorien, Mansurien et Kuiperien.",
-      missions: [{ year: "1974", name: "Mariner 10", note: "Premiers survols rapprochés." }, { year: "2011", name: "MESSENGER", note: "Mise en orbite et cartographie." }, { year: "2018", name: "BepiColombo", note: "En route (ESA/JAXA)." }],
+      overviewMetrics: [
+        { label: "Rayon volumétrique", val: "2 439,7 km (0,383 R⊕)" },
+        { label: "Masse métrique", val: "3,301 × 10²³ kg (0,055 M⊕)" },
+        { label: "Densité moyenne", val: "5,427 g/cm³" },
+        { label: "Gravité de surface", val: "3,70 m/s² (0,378 g)" },
+        { label: "Vitesse de libération", val: "4,25 km/s" },
+        { label: "Superficie totale", val: "7,48 × 10⁷ km² (0,147 Terre)" }
+      ],
+      geodynamicsGauges: [
+        { label: "Fraction volumique du noyau", val: 85, color: "#ef4444" },
+        { label: "Contraction thermique radiale", val: 88, color: "#f59e0b" },
+        { label: "Taux de cratérisation fossile", val: 98, color: "#38bdf8" },
+        { label: "Activité géologique actuelle", val: 5, color: "#64748b" }
+      ],
+      geophysics: "Le trait dominant de Mercure est sa contraction radiale thermique globale : au cours de son refroidissement, la planète s'est rétractée de 7 à 14 km de circonférence, créant un réseau planétaire de failles de chevauchement lobées (rupes) pouvant atteindre 3 000 m de dénivelé et 1 000 km de long. Le volcanisme effusif primaire a inondé les plaines inter-cratères (inter-crater plains) et comblé les dépressions d'impact comme le bassin Caloris.",
+      magnetism: "Mercure possède un champ magnétique dipolaire intrinsèque (~300 nT à l'équateur, soit 1,1 % du champ terrestre). Bien que modeste, il est entretenu par un effet dynamo actif au sein d'une coquille liquide de fer-silicium-soufre. Ce dipôle est décentré de 484 km vers le nord le long de son axe de rotation, créant une asymétrie marquée dans le bombardement du vent solaire entre les pôles.",
+      geoMetrics: [
+        { label: "Rayon du noyau métallique", val: "2 020 km (83 % R)" },
+        { label: "Champ dipolaire équatorial", val: "~300 nT" },
+        { label: "Épaisseur crustale moyenne", val: "35 ± 18 km" },
+        { label: "Bassin Caloris (impact)", val: "1 550 km diamètre" }
+      ],
+      gasComposition: [
+        { name: "Dioxygène (O2)", pct: 42.0, color: "#38bdf8" },
+        { name: "Sodium (Na)", pct: 29.0, color: "#fbbf24" },
+        { name: "Hydrogène (H2)", pct: 22.0, color: "#60a5fa" },
+        { name: "Hélium (He)", pct: 6.0, color: "#a855f7" },
+        { name: "Potassium (K) & traces", pct: 1.0, color: "#cbd5e1" }
+      ],
+      atmosphere: "Mercure ne possède pas d'atmosphère substantielle mais une exosphère de surface sans collisions moléculaires (pression inférieure à 10⁻¹⁴ bar). Cette enveloppe ténue est alimentée en continu par le vent solaire (ions H+ et He++ piégés), la pulvérisation cathodique (sputtering), la vaporisation par impact de micrométéorites et le dégazage thermique de la croûte. Une queue d'atomes de sodium neutres s'étire sur plus de 2 millions de kilomètres à l'opposé du Soleil sous l'effet de la pression de radiation.",
+      climate: "Dépourvue d'enveloppe convective pour redistribuer l'énergie, la surface présente les écarts diurnes les plus violents du système solaire : de -180 °C (93 K) durant la nuit herméenne à +430 °C (703 K) au midi solaire périhélique. Dans les fonds de cratères d'impact polaires éternellement plongés dans l'ombre (notamment Prokofiev et Chao Meng-Fu), des réservoirs de glace d'eau pérenne et de composés organiques volatils sont piégés à -200 °C depuis des milliards d'années.",
+      atmoMetrics: [
+        { label: "Pression de surface", val: "~10⁻¹⁴ bar (1 nPa)" },
+        { label: "Température maximale (midi)", val: "+430 °C (703 K)" },
+        { label: "Température minimale (nuit)", val: "-180 °C (93 K)" },
+        { label: "Albédo de Bond géométrique", val: "0,068 / 0,142" }
+      ],
+      orbit: "L'orbite présente la plus forte excentricité (e = 0,2056) et la plus forte inclinaison écliptique (i = 7,00°) des huit planètes. Mercure est verrouillé dans une résonance spin-orbite 3:2 stricte : la planète tourne exactement trois fois sur son axe (58,646 jours) pendant qu'elle accomplit deux révolutions autour du Soleil (87,969 jours). Il en résulte un jour solaire (intervalle midi-midi) valant 176 jours terrestres, soit deux années herméennes complètes. Au périhélie, la vitesse orbitale dépasse la vitesse angulaire de rotation, provoquant un spectaculaire 'mouvement rétrograde apparent' du Soleil dans le ciel herméen.",
+      orbitSemiMajor: 0.3871, 
+      orbitEccentricity: 0.2056,
+      orbitMetrics: [
+        { label: "Demi-grand axe (a)", val: "0,3871 UA (57,91 M km)" },
+        { label: "Périhélie (q) / Aphélie (Q)", val: "46,00 / 69,82 M km" },
+        { label: "Période orbitale (sidérale)", val: "87,969 jours" },
+        { label: "Période de rotation propre", val: "58,646 jours" },
+        { label: "Vitesse orbitale moyenne", val: "47,36 km/s" },
+        { label: "Inclinaison axe / orbite", val: "0,034° (quasi nulle)" }
+      ],
+      history: "L'échelle chronostratigraphique herméenne se décline en 5 ères géologiques : Pré-Tolstoïen (> 4,0 Ga, cratérisation primitive), Tolstoïen (4,0 - 3,9 Ga, impact du bassin Tolstoj et plaines inter-cratères), Calorien (3,9 - 3,5 Ga, cataclysme d'impact Caloris et laves lisses), Mansurien (3,5 - 1,0 Ga, impacts sans système de rayons brillants) et Kuiperien (1,0 Ga à nos jours, cratères jeunes aux éjectas clairs comme Kuiper et Debussy).",
+      missions: [
+        { year: "1974-1975", name: "Mariner 10 (NASA)", note: "Trois survols gravitationnels découvrant le champ magnétique inattendu et photographiant 45 % du relief." },
+        { year: "2011-2015", name: "MESSENGER (NASA)", note: "Premier orbiteur herméen ; cartographie intégrale, découverte de la glace aux pôles et confirmation de l'épaisseur du noyau de fer." },
+        { year: "2018-2026", name: "BepiColombo (ESA / JAXA)", note: "Sonde double (MPO et MMO) en phase d'insertion orbitale pour analyser l'exosphère et la structure interne." }
+      ],
       pois: getMercuryPOIs()
     },
     "Vénus": {
