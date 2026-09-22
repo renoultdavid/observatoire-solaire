@@ -1254,28 +1254,75 @@
   };
 
   const CATALOG = {
-    "Soleil": {
-      name: "Soleil", type: "Étoile naine jaune (G2V)", scale: 109.2, color: 0xffaa00, texture: SUN_URL, isSun: true,
-      desc: "Centre gravitationnel absolu concentrant 99,86 % de la masse du système et fournissant l'énergie par fusion thermonucléaire de l'hydrogène en hélium.",
+   "Soleil": {
+      name: "Soleil", 
+      type: "Étoile naine jaune (Spectre G2V / Population I)", 
+      scale: 109.2, 
+      color: 0xffaa00, 
+      texture: SUN_URL, 
+      isSun: true,
+      desc: "Centre gravitationnel absolu concentrant 99,86 % de la masse de tout le système planétaire, le Soleil est une sphère de plasma ionisé en équilibre hydrostatique. Sa luminosité est alimentée en continu au cœur par la fusion thermonucléaire de l'hydrogène en hélium selon la chaîne proton-proton (chaîne p-p), convertissant environ 4,26 millions de tonnes de matière en énergie pure chaque seconde.",
       cutaway: [
-        { name: "Cœur thermonucléaire", radius: 0.25, color: "#ff2200", temp: "15 000 000 K" },
-        { name: "Zone radiative", radius: 0.70, color: "#ff8800", temp: "7 000 000 K" },
-        { name: "Zone convective", radius: 0.95, color: "#ffcc00", temp: "2 000 000 K" },
-        { name: "Photosphère", radius: 1.00, color: "#fff3cc", temp: "5 778 K" }
+        { name: "Cœur thermonucléaire (chaîne p-p)", radius: 0.25, color: "#991b1b", temp: "~15 700 000 K" },
+        { name: "Zone radiative (transfert photonique)", radius: 0.70, color: "#dc2626", temp: "7 000 000 - 2 000 000 K" },
+        { name: "Tachocline (cisaillement dynamo)", radius: 0.72, color: "#ea580c", temp: "~2 000 000 K" },
+        { name: "Zone convective & Photosphère", radius: 1.00, color: "#fef08a", temp: "5 778 K (surface)" }
       ],
-      overviewMetrics: [{ label: "Diamètre", val: "1 392 700 km" }, { label: "Masse", val: "1,989 × 10³⁰ kg" }, { label: "Gravité surface", val: "274 m/s² (28 g)" }],
-      geodynamicsGauges: [{ label: "Activité dynamo", val: 95, color: "#ef4444" }, { label: "Cycle magnétique (11 ans)", val: 100, color: "#f59e0b" }],
-      geophysics: "Boule de plasma ionisé dépourvue de surface solide, en rotation différentielle entre l'équateur (25 jours) et les pôles (35 jours).",
-      magnetism: "Champ magnétique global complexe induisant des boucles coronales et des éjections de masse coronale (CME).",
-      geoMetrics: [{ label: "Densité centrale", val: "150 g/cm³" }, { label: "Pression au centre", val: "2,5 × 10¹¹ bar" }],
-      gasComposition: [{ name: "Hydrogène", pct: 73.5, color: "#38bdf8" }, { name: "Hélium", pct: 24.8, color: "#fbbf24" }],
-      atmosphere: "Chromosphère et couronne solaire s'étendant sous forme de plasma continu.",
-      climate: "Température photosphérique de 5 778 K, s'élevant à plusieurs millions de degrés dans la couronne.",
-      atmoMetrics: [{ label: "Vitesse vent", val: "450 km/s" }, { label: "Perte de masse", val: "1 Mt/s" }],
-      orbit: "Orbite autour du centre galactique en 230 millions d'années.",
-      orbitSemiMajor: 0, orbitEccentricity: 0, orbitMetrics: [{ label: "Vitesse galactique", val: "~220 km/s" }],
-      history: "Né il y a 4,57 Ga ; stable sur la séquence principale pour encore environ 5 milliards d'années.",
-      missions: [{ year: "1995", name: "SOHO", note: "Surveillance continue de la couronne." }, { year: "2018", name: "Parker Solar Probe", note: "Plongée dans la couronne externe." }],
+      overviewMetrics: [
+        { label: "Diamètre volumétrique", val: "1 392 700 km (109,2 D⊕)" },
+        { label: "Masse stellaire (M☉)", val: "1,9885 × 10³⁰ kg (332 946 M⊕)" },
+        { label: "Volume relatif", val: "1,412 × 10¹⁸ km³ (1,304 M Terre)" },
+        { label: "Densité moyenne", val: "1,408 g/cm³" },
+        { label: "Gravité effective surface", val: "274,0 m/s² (27,94 g)" },
+        { label: "Vitesse de libération", val: "617,7 km/s" }
+      ],
+      geodynamicsGauges: [
+        { label: "Activité dynamo magnétique", val: 96, color: "#ef4444" },
+        { label: "Cycle magnétique de Schwabe (11 ans)", val: 100, color: "#f59e0b" },
+        { label: "Convection thermique de surface", val: 92, color: "#38bdf8" },
+        { label: "Stabilité hydrostatique", val: 100, color: "#10b981" }
+      ],
+      geophysics: "L'intérieur solaire est structuré en trois zones majeures : le cœur thermonucléaire (0 à 0,25 R☉, où la densité culmine à 150 g/cm³ et la pression à 2,5 × 10¹¹ bar), la zone radiative (0,25 à 0,70 R☉, où les photons gamma subissent d'innombrables diffusions Compton, mettant de 100 000 à 170 000 ans pour s'échapper), et la zone convective externe (0,70 à 1,00 R☉) où l'énergie est transportée par d'immenses cellules de plasma ascendantes créant la granulation photosphérique (cellules de ~1 000 km de diamètre renouvelées toutes les 8 à 20 minutes).",
+      magnetism: "À l'interface entre la zone radiative et convective se trouve la tachocline, une fine couche de cisaillement différentiel où est généré le puissant champ magnétique stellaire par effet dynamo alpha-oméga. Le Soleil présente une rotation différentielle : l'équateur tourne en 25,05 jours tandis que les pôles mettent 34,4 jours. Ce différentiel étire et tord les lignes de flux magnétique, engendrant le cycle d'activité de Schwabe (11 ans) et le cycle magnétique complet de Hale (22 ans d'inversion des pôles magnétiques), accompagnés de taches solaires, protubérances et éjections de masse coronale (CME).",
+      geoMetrics: [
+        { label: "Puissance rayonnée (Luminosité)", val: "3,828 × 10²⁶ W" },
+        { label: "Densité au centre", val: "150 g/cm³ (13 x plomb)" },
+        { label: "Pression centrale", val: "2,477 × 10¹¹ bar" },
+        { label: "Champ magnétique tachocline", val: "Jusqu'à 10 Tesla" }
+      ],
+      gasComposition: [
+        { name: "Hydrogène (H)", pct: 73.46, color: "#38bdf8" },
+        { name: "Hélium (He)", pct: 24.85, color: "#fbbf24" },
+        { name: "Oxygène (O)", pct: 0.77, color: "#34d399" },
+        { name: "Carbone (C)", pct: 0.29, color: "#a855f7" },
+        { name: "Fer, Néon, Azote, Silicium", pct: 0.63, color: "#cbd5e1" }
+      ],
+      atmosphere: "L'atmosphère solaire est divisée en photosphère (surface visible de 400 km d'épaisseur à 5 778 K émettant le spectre continu), chromosphère (couche de 2 000 km dominée par l'émission H-alpha à 656,3 nm où la température remonte vers 20 000 K), région de transition thermique abrupte, et couronne solaire. Cette dernière, constituée d'un plasma raréfié porté à plus de 1 à 3 millions de Kelvin par chauffage magnétique (ondes de Alfvén et reconnexions magnétiques), s'étend sur des millions de kilomètres et se dilue dans l'espace pour former le vent solaire.",
+      climate: "Le vent solaire est un flux continu d'ions (protons H+, particules alpha He++ et électrons) soufflé à des vitesses de 300 à 450 km/s (vent lent équatorial) et de 700 à 800 km/s (vent rapide issu des trous coronaux polaires). Ce plasma magnétisé gonfle l'héliosphère, une bulle protectrice s'étendant à plus de 120 UA qui repousse l'essentiel du rayonnement cosmique galactique hautement énergétique.",
+      atmoMetrics: [
+        { label: "Température photosphère", val: "5 778 K (5 505 °C)" },
+        { label: "Température couronne", val: "1 à 3 × 10⁶ K" },
+        { label: "Flux perte de masse", val: "~1,4 × 10⁹ kg/s" },
+        { label: "Constante solaire (à 1 UA)", val: "1 361 W/m²" }
+      ],
+      orbit: "Le Soleil n'est pas immobile : il orbite autour du centre de masse de la Voie Lactée (Sagittarius A*) à une distance d'environ 26 000 à 28 000 années-lumière. Sa vitesse orbitale circulaire est d'environ 220 à 230 km/s, ce qui correspond à une 'année galactique' d'environ 225 à 250 millions d'années. Il oscille également verticalement à travers le plan du disque galactique selon une période d'environ 60 à 70 millions d'années. Par ailleurs, sous l'attraction gravitationnelle des planètes (principalement Jupiter et Saturne), le Soleil tourne autour du barycentre du système solaire qui se situe souvent en dehors de son propre rayon physique.",
+      orbitSemiMajor: 0, 
+      orbitEccentricity: 0,
+      orbitMetrics: [
+        { label: "Distance centre galactique", val: "~26 660 al (8,18 kpc)" },
+        { label: "Vitesse orbitale galactique", val: "~220 à 230 km/s" },
+        { label: "Période de révolution galactique", val: "~230 millions d'années" },
+        { label: "Période rotation équatoriale", val: "25,05 jours terrestres" },
+        { label: "Période rotation aux pôles", val: "34,4 jours terrestres" },
+        { label: "Inclinaison axe / écliptique", val: "7,25°" }
+      ],
+      history: "Né il y a 4,5682 milliards d'années par effondrement gravitationnel d'un fragment de nuage moléculaire géant enrichi en métaux par des supernovae antérieures. Le Soleil est actuellement à la moitié de sa vie sur la séquence principale. Dans environ 5 milliards d'années, l'épuisement de l'hydrogène dans son cœur provoquera son expansion en géante rouge (englobant Mercure, Vénus et probablement la Terre), avant d'expulser ses couches externes sous forme de nébuleuse planétaire pour laisser une naine blanche dégénérée de carbone-oxygène.",
+      missions: [
+        { year: "1995-en cours", name: "SOHO (ESA / NASA)", note: "Pionnier de l'héliosismologie et de la détection précoce des éjections de masse coronale (CME) au point de Lagrange L1." },
+        { year: "2010-en cours", name: "SDO (NASA)", note: "Observatoire de la dynamique solaire observant la photosphère et la couronne en ultraviolet extrême à cadence quasi instantanée." },
+        { year: "2018-en cours", name: "Parker Solar Probe (NASA)", note: "Sonde en orbite rasante ayant pénétré pour la première fois à l'intérieur de la couronne solaire (< 10 R☉) pour sonder in situ le chauffage coronale." },
+        { year: "2020-en cours", name: "Solar Orbiter (ESA)", note: "Étude rapprochée hors de l'écliptique fournissant les premières images résolues des régions polaires solaires." }
+      ],
       pois: []
     },
     "Mercure": {
@@ -1347,27 +1394,76 @@
       ],
       pois: getMercuryPOIs()
     },
-    "Vénus": {
-      name: "Vénus", type: "Planète tellurique à effet de serre", scale: 0.949, color: 0xd69c5a, texture: VENUS_ATM_URL, textureSurface: VENUS_SOL_URL,
-      desc: "Jumelle géologique de la Terre transformée en fournaise par un effet de serre emballé sous 92 bars de dioxyde de carbone.",
+   "Vénus": {
+      name: "Vénus", 
+      type: "Planète tellurique à effet de serre emballé (Cythéréenne)", 
+      scale: 0.9488, 
+      color: 0xd69c5a, 
+      texture: VENUS_ATM_URL, 
+      textureSurface: VENUS_SOL_URL,
+      desc: "Quasi-jumelle de la Terre par sa taille et sa masse, Vénus a connu une divergence climatique cataclysmique. Scellée sous une atmosphère supercritique de 92 bars de dioxyde de carbone et enveloppée d'un voile opaque d'acide sulfurique, elle subit un effet de serre extrême qui porte sa surface basaltique à 465 °C, température uniforme de jour comme de nuit supérieure au point de fusion du plomb.",
       cutaway: [
-        { name: "Noyau Fe-Ni", radius: 0.50, color: "#dc2626", temp: "4 000 K" },
-        { name: "Manteau convectif", radius: 0.92, color: "#d97706", temp: "2 500 K" },
-        { name: "Croûte basaltique", radius: 1.00, color: "#78350f", temp: "740 K" }
+        { name: "Graine solide centrale (Fe-Ni)", radius: 0.25, color: "#991b1b", temp: "~4 500 K" },
+        { name: "Noyau métallique liquide (Fe-Ni)", radius: 0.52, color: "#dc2626", temp: "~3 800 K" },
+        { name: "Manteau convectif silicaté", radius: 0.92, color: "#d97706", temp: "~2 600 K" },
+        { name: "Croûte basaltique épaisse", radius: 1.00, color: "#78350f", temp: "737 K (surface)" }
       ],
-      overviewMetrics: [{ label: "Diamètre", val: "12 104 km" }, { label: "Pression sol", val: "92 bars (9,2 MPa)" }, { label: "Temp. moyenne", val: "465 °C" }, { label: "Gravité", val: "8,87 m/s²" }],
-      geodynamicsGauges: [{ label: "Effet de serre", val: 100, color: "#ef4444" }, { label: "Volcanisme récent", val: 90, color: "#f59e0b" }, { label: "Super-rotation", val: 95, color: "#38bdf8" }],
-      geophysics: "Surface entièrement remodelée par des épanchements volcaniques massifs et des structures tectoniques uniques (coronae, dômes farra).",
-      magnetism: "Dépourvue de champ dipolaire intrinsèque ; magnétosphère induite par frottement direct du vent solaire sur l'ionosphère.",
-      geoMetrics: [{ label: "Surface volcanique", val: "> 85 %" }, { label: "Altitude max (Maxwell)", val: "11 km" }],
-      gasComposition: [{ name: "CO2", pct: 96.5, color: "#f87171" }, { name: "Diazote (N2)", pct: 3.5, color: "#60a5fa" }],
-      atmosphere: "Atmosphère ultra-dense composée de nuages d'acide sulfurique circulant à plus de 360 km/h aux sommets nuageux.",
-      climate: "Température uniforme d'un pôle à l'autre de jour comme de nuit, scellée par l'opacité infrarouge du CO2.",
-      atmoMetrics: [{ label: "Masse atmosphère", val: "93 x Terre" }, { label: "Vents sommitaux", val: "360 km/h" }],
-      orbit: "Rotation rétrograde très lente (243 jours terrestres), plus longue que son année orbitale (224,7 jours).",
-      orbitSemiMajor: 0.723, orbitEccentricity: 0.0067, orbitMetrics: [{ label: "Périhélie", val: "107,5 M km" }, { label: "Aphélie", val: "108,9 M km" }],
-      history: "Perte précoce de son hydrosphère avec emballement du carbone atmosphérique il y a 3 à 4 milliards d'années.",
-      missions: [{ year: "1970", name: "Venera 7", note: "Premier atterrissage réussi." }, { year: "1990", name: "Magellan", note: "Cartographie radar globale." }],
+      overviewMetrics: [
+        { label: "Rayon volumétrique", val: "6 051,8 km (0,949 R⊕)" },
+        { label: "Masse métrique", val: "4,867 × 10²⁴ kg (0,815 M⊕)" },
+        { label: "Densité moyenne", val: "5,243 g/cm³" },
+        { label: "Gravité effective sol", val: "8,87 m/s² (0,904 g)" },
+        { label: "Vitesse de libération", val: "10,36 km/s" },
+        { label: "Superficie totale", val: "4,60 × 10⁸ km² (0,902 Terre)" }
+      ],
+      geodynamicsGauges: [
+        { label: "Surpression atmosphérique sol", val: 100, color: "#ef4444" },
+        { label: "Recouvrement magmatique récent", val: 92, color: "#f59e0b" },
+        { label: "Super-rotation atmosphérique", val: 96, color: "#38bdf8" },
+        { label: "Tectonique des plaques active", val: 0, color: "#64748b" }
+      ],
+      geophysics: "Vénus est dépourvue de tectonique des plaques globale : la lithosphère, trop chaude et asséchée, ne peut subduire comme sur Terre. La planète fonctionne sous un régime de 'couvercle stagnant' (stagnant lid) ponctué d'épisodes paroxystiques de resurfaçage magmatique global (le dernier remontant à 300 - 500 millions d'années). Sa morphologie volcanique est unique : dômes de lave visqueuse en galettes (farra), vastes réseaux de fractures en toiles d'araignées (novae, arachnoïdes) et immenses dépressions annulaires créées par l'ascension puis l'affaissement de panaches mantelliques (coronae, dont Artemis Corona de 2 600 km de diamètre).",
+      magnetism: "Malgré un noyau métallique liquide de dimension comparable à celui de la Terre, Vénus ne possède aucun champ magnétique dipolaire intrinsèque mesurable. L'absence de tectonique des plaques empêche un refroidissement efficace du noyau par le bas du manteau, ce qui éteint la convection thermique interne nécessaire à l'effet dynamo. Sa magnétosphère est purement 'induite' : c'est le vent solaire qui compresse directement l'ionosphère vénusienne conductrice, créant une onde de choc et une magnétoqueue allongée où des ions d'oxygène et d'hydrogène s'échappent en continu dans l'espace.",
+      geoMetrics: [
+        { label: "Rayon estimé du noyau", val: "~3 110 km (51 % R)" },
+        { label: "Épaisseur crustale moyenne", val: "20 à 45 km" },
+        { label: "Point culminant (Montes Maxwell)", val: "+11 000 m" },
+        { label: "Canal de lave (Vallis Baltis)", val: "6 800 km longueur" }
+      ],
+      gasComposition: [
+        { name: "Dioxyde de carbone (CO2)", pct: 96.5, color: "#f87171" },
+        { name: "Diazote (N2)", pct: 3.5, color: "#60a5fa" },
+        { name: "Dioxyde de soufre (SO2)", pct: 0.015, color: "#fde047" },
+        { name: "Vapeur d'eau (H2O)", pct: 0.002, color: "#38bdf8" },
+        { name: "Argon, Monoxyde de carbone, Hél.", pct: 0.003, color: "#cbd5e1" }
+      ],
+      atmosphere: "L'atmosphère vénusienne est un océan gazeux dense pesant 93 fois la masse de l'atmosphère terrestre, avec une pression au sol de 92 bars (équivalente à 900 m de profondeur sous l'océan terrestre). Entre 48 et 70 km d'altitude flotte un épais pont nuageux continu composé de gouttelettes d'acide sulfurique concentré (H2SO4 à 75-96 %). Ces nuages sont le siège d'une super-rotation atmosphérique spectaculaire : soufflés par des vents d'est de plus de 360 km/h, ils font le tour de la planète en seulement 4 jours terrestres, soit 60 fois plus vite que la rotation du sol en dessous.",
+      climate: "L'effet de serre y est le plus puissant du système solaire (+440 K de réchauffement radiatif), scellé par l'opacité infrarouge du CO2 supercritique et des brumes acides. La température de surface est bloquée à 465 °C (737 K) sans variation saisonnière ni contraste jour/nuit. Aux altitudes comprises entre 50 et 55 km, les conditions deviennent étrangement clémentes : la pression avoisine 1 bar et la température oscille entre 20 °C et 35 °C, constituant le seul environnement thermique et barométrique terrestre du système solaire externe à la Terre.",
+      atmoMetrics: [
+        { label: "Pression au niveau moyen", val: "92,1 bars (9,21 MPa)" },
+        { label: "Masse atmosphérique totale", val: "4,8 × 10²⁰ kg (93 x Terre)" },
+        { label: "Température moyenne sol", val: "+465 °C (738 K)" },
+        { label: "Albédo de Bond géométrique", val: "0,76 (réflecteur nuageux)" }
+      ],
+      orbit: "Vénus présente une cinématique singulière : sa rotation propre est rétrograde (l'axe est inversé à 177,36°, le Soleil s'y lève à l'ouest et se couche à l'est) et d'une lenteur exceptionnelle. Il lui faut 243,02 jours terrestres pour effectuer un tour sur elle-même, ce qui est plus long que son année orbitale (224,70 jours terrestres) ! La combinaison de cette rotation rétrograde et de sa révolution engendre un jour solaire vénusien (d'un lever de soleil au suivant) valant exactement 116,75 jours terrestres. Son orbite autour du Soleil est la plus circulaire de toutes les planètes (excentricité quasi nulle e = 0,0067).",
+      orbitSemiMajor: 0.7233, 
+      orbitEccentricity: 0.0067,
+      orbitMetrics: [
+        { label: "Demi-grand axe (a)", val: "0,7233 UA (108,21 M km)" },
+        { label: "Périhélie (q) / Aphélie (Q)", val: "107,48 / 108,94 M km" },
+        { label: "Période orbitale (sidérale)", val: "224,70 jours terrestres" },
+        { label: "Période de rotation propre", val: "243,02 jours (rétrograde)" },
+        { label: "Jour solaire vénusien", val: "116,75 jours terrestres" },
+        { label: "Inclinaison axe de rotation", val: "177,36° (inversion)" }
+      ],
+      history: "Au cours du premier milliard d'années, Vénus possédait vraisemblablement des océans d'eau liquide et des températures compatibles avec l'eau libre. Avec l'augmentation progressive de la luminosité du jeune Soleil, l'évaporation s'est accélérée, injectant de la vapeur d'eau (puissant gaz à effet de serre) jusqu'à déclencher un emballement thermique irréversible (runaway greenhouse effect). L'eau portée en haute altitude a été photodissociée par les ultraviolets solaires et l'hydrogène s'est échappé dans l'espace, laissant une planète entièrement déshydratée où le carbone minéral a dégazé dans l'air.",
+      missions: [
+        { year: "1962", name: "Mariner 2 (NASA)", note: "Premier survol interplanétaire réussi de l'histoire confirmant la fournaise de surface." },
+        { year: "1970", name: "Venera 7 (URSS)", note: "Premier atterrissage en douceur et transmission de données in situ sous 90 bars et 475 °C." },
+        { year: "1982", name: "Venera 13 & 14 (URSS)", note: "Premières photographies couleur panoramiques du sol basaltique et forage spectrométrique." },
+        { year: "1990-1994", name: "Magellan (NASA)", note: "Cartographie radar par ouverture synthétique (SAR) révélant 98 % du relief planétaire." },
+        { year: "2006-2014", name: "Venus Express (ESA)", note: "Analyse spectroscopique de l'atmosphère et détection d'indices de volcanisme actif récent." }
+      ],
       pois: getVenusPOIs()
     },
     "Terre": {
