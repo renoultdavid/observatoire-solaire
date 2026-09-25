@@ -71,18 +71,21 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.85);
     }
     /* Barre de liens externes vers les fiches du site */
+  /* Barre de liens externes vers les fiches du site */
     #links-bar {
-      position: absolute;
-      top: 62px;
-      left: 12px;
-      right: 12px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 5px;
-      z-index: 19;
       pointer-events: none;
+      margin-top: 2px;
     }
     .links-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+    }
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
@@ -544,9 +547,8 @@
         <button id="btn-studio-pause" style="display:none;">⏸ Pause Rotation</button>
         <button id="btn-toggle-orbits">Orbites : On</button>
       </div>
-    </div>
-
-    <div id="links-bar">
+      
+      <div id="links-bar">
       <!-- Ligne 1 : Soleil, Planètes telluriques & Ceinture principale -->
       <div class="links-row">
         <a class="planet-link-btn" href="https://sites.google.com/view/renoultdavid/astronomie/syst%C3%A8me-solaire/soleil?authuser=0" target="_blank" rel="noopener noreferrer" style="--accent-color: #f59e0b; --glow-color: rgba(245, 158, 11, 0.45);">☀️ Soleil</a>
@@ -567,6 +569,8 @@
         <a class="planet-link-btn" href="https://sites.google.com/view/renoultdavid/astronomie/syst%C3%A8me-solaire/ceinture-kuiper-et-pluton?authuser=0" target="_blank" rel="noopener noreferrer" style="--accent-color: #c084fc; --glow-color: rgba(192, 132, 252, 0.45);">❄️ Kuiper & Pluton</a>
       </div>
     </div>
+    
+   </div>
 
     <div id="geo-legend" class="hud-card">
       <div class="legend-title" id="legend-title">Reliefs planétaires :</div>
